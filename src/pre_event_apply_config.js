@@ -1,5 +1,5 @@
 window.PRE_EVENT_APPLY_CONFIG = {
-  firebaseBase: "https://eva-lucky-draw-default-rtdb.asia-southeast1.firebasedatabase.app",
+  firebaseBase: "https://jc-annualdinner-default-rtdb.asia-southeast1.firebasedatabase.app",
   registrationDeadline: "",
   revealFrom: "",
   revealDaysBeforeEvent: 7,

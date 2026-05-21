@@ -1,5 +1,5 @@
 const PRE_EVENT_ADMIN_CONFIG = window.PRE_EVENT_APPLY_CONFIG || {};
-const ADMIN_FIREBASE_BASE = PRE_EVENT_ADMIN_CONFIG.firebaseBase || "https://eva-lucky-draw-default-rtdb.asia-southeast1.firebasedatabase.app";
+const ADMIN_FIREBASE_BASE = PRE_EVENT_ADMIN_CONFIG.firebaseBase || "https://jc-annualdinner-default-rtdb.asia-southeast1.firebasedatabase.app";
 
 let currentRows = [];
 let currentPeople = [];

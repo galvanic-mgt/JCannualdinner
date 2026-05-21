@@ -3,7 +3,7 @@
 
 // === CONFIG ===
 // NOTE: this should match src/config.js.
-const FIREBASE_BASE = "https://eva-lucky-draw-default-rtdb.asia-southeast1.firebasedatabase.app";
+const FIREBASE_BASE = "https://jc-annualdinner-default-rtdb.asia-southeast1.firebasedatabase.app";
 
 // Helper to build URLs like `${FIREBASE_BASE}/events/e123/info.json`
 function dbUrl(path) {
