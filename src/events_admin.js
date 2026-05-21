@@ -1,8 +1,8 @@
-// events_admin.js — 活動管理 subpage logic (with status + auto-refresh)
+// events_admin.js ??活�?管�? subpage logic (with status + auto-refresh)
 import {
   listEvents, createEvent, upsertEventMeta, deleteEvent,
   getEventInfo, saveEventInfo, setCurrentEventId
-} from './core_firebase.js';
+} from './core_firebase.js?v=20260521-jcdb';
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -25,9 +25,9 @@ function rowTemplate(ev){
   <td><input class="client" value="${ev.client || ''}"/></td>
   <td style="text-align:center"><input type="checkbox" class="listed" ${listed ? 'checked' : ''}/></td>
   <td class="actions">
-    <button class="btn small open">開啟</button>
-    <button class="btn small save">儲存</button>
-    <button class="btn small danger delete">刪除</button>
+    <button class="btn small open">?��?</button>
+    <button class="btn small save">?��?</button>
+    <button class="btn small danger delete">?�除</button>
   </td>
 </tr>`;
 }
@@ -47,32 +47,32 @@ async function bindRowActions(tbody){
         const name   = tr.querySelector('.name').value.trim();
         const client = tr.querySelector('.client').value.trim();
         const listed = tr.querySelector('.listed').checked;
-        await upsertEventMeta(id, { name: name || '新活動', client, listed });
+        await upsertEventMeta(id, { name: name || '?�活??, client, listed });
 
         // keep info.title in sync when blank/unchanged
         const info = (await getEventInfo(id)).info || {};
         if(!info.title || info.title === '' || info.title === tr.dataset.lastTitle){
-          await saveEventInfo(id, { ...info, title: name || info.title || '新活動' });
+          await saveEventInfo(id, { ...info, title: name || info.title || '?�活?? });
         }
 
         tr.classList.add('saved');
         setTimeout(()=> tr.classList.remove('saved'), 700);
-        setStatus('已儲存 ✓');
+        setStatus('已儲�???);
         window.refreshCMS?.();            // auto-refresh CMS (left list, etc.)
       }catch(err){
-        setStatus('儲存失敗：' + (err?.message || err), 'error');
+        setStatus('?��?失�?�? + (err?.message || err), 'error');
       }
     });
 
     tr.querySelector('.delete')?.addEventListener('click', async ()=>{
-      if(!confirm('確定刪除這個活動？此操作無法還原。')) return;
+      if(!confirm('確�??�除?�個活?��?此�?作無法�??��?)) return;
       try{
         await deleteEvent(id);
-        setStatus('已刪除 ✓');
+        setStatus('已刪????);
         await renderEventsAdmin();        // re-render admin table
         window.refreshCMS?.();            // refresh sidebar & tabs
       }catch(err){
-        setStatus('刪除失敗：' + (err?.message || err), 'error');
+        setStatus('?�除失�?�? + (err?.message || err), 'error');
       }
     });
   });
@@ -83,20 +83,20 @@ export async function renderEventsAdmin(){
 
   container.innerHTML = `
 <div class="card" style="margin-bottom:12px">
-  <h4>新增活動</h4>
+  <h4>?��?活�?</h4>
   <div class="bar" style="gap:8px; align-items:center">
-    <input id="eaName" placeholder="活動名稱"/>
-    <input id="eaClient" placeholder="客戶名稱"/>
-    <label style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="eaListed" checked/> 顯示於活動清單</label>
-    <button id="eaCreate" class="btn primary">+ 建立</button>
+    <input id="eaName" placeholder="活�??�稱"/>
+    <input id="eaClient" placeholder="客戶?�稱"/>
+    <label style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="eaListed" checked/> 顯示?�活?��???/label>
+    <button id="eaCreate" class="btn primary">+ 建�?</button>
     <span id="eaStatus" class="muted" style="font-size:12px;opacity:.7"></span>
   </div>
 </div>
 
 <div class="card">
-  <h4>全部活動</h4>
+  <h4>?�部活�?</h4>
   <table class="fullwidth">
-    <thead><tr><th>ID</th><th>名稱</th><th>客戶</th><th>列出</th><th>動作</th></tr></thead>
+    <thead><tr><th>ID</th><th>?�稱</th><th>客戶</th><th>?�出</th><th>?��?</th></tr></thead>
     <tbody id="eaRows"></tbody>
   </table>
 </div>`;
@@ -109,19 +109,19 @@ export async function renderEventsAdmin(){
     const listed = $('#eaListed').checked;
     btn.disabled = true;
     const orig = btn.textContent;
-    btn.textContent = '建立活動中…';
-    setStatus('建立活動中…');
+    btn.textContent = '建�?活�?中�?;
+    setStatus('建�?活�?中�?);
 
     try{
       const id = await createEvent(name, client);
       if(listed === false){
         await upsertEventMeta(id, { listed: false });
       }
-      setStatus('已建立 ✓');
+      setStatus('已建�???);
       await renderEventsAdmin();    // refresh admin table
       window.refreshCMS?.();        // refresh sidebar & tabs
     }catch(err){
-      setStatus('建立失敗：' + (err?.message || err), 'error');
+      setStatus('建�?失�?�? + (err?.message || err), 'error');
     }finally{
       btn.disabled = false;
       btn.textContent = orig;

@@ -1,5 +1,5 @@
-import { getCurrentEventId, getPeople, setPeople, getEventInfo, getPrizes } from './core_firebase.js';
-import { FB } from './fb.js';
+import { getCurrentEventId, getPeople, setPeople, getEventInfo, getPrizes } from './core_firebase.js?v=20260521-jcdb';
+import { FB } from './fb.js?v=20260521-jcdb';
 
 export function normalizeName(s){ return (s || '').trim().replace(/\s+/g,' '); }
 
@@ -19,7 +19,7 @@ function splitCSVLine(line){
 function toBool(v){
   if (typeof v === 'boolean') return v;
   const s = String(v||'').trim().toLowerCase();
-  return s === '1' || s === 'y' || s === 'yes' || s === 'true' || s === '是' || s === '到' || s === 'present';
+  return s === '1' || s === 'y' || s === 'yes' || s === 'true' || s === '?? || s === '?? || s === 'present';
 }
 
 function mapHeaderIndex(headers, info){
@@ -38,13 +38,13 @@ function mapHeaderIndex(headers, info){
   const labelDept  = (info?.labelDept  || 'department').toLowerCase();
 
   return {
-    code:     hp(['code','票號','代碼']),
-    phone:    hp(['phone','mobile','tel','電話', labelPhone]),
-    name:     hp(['name','姓名']),
-    dept:     hp(['department','dept','描述','說明','部門','description', labelDept]),
-    table:    hp(['table','枱','桌','桌號','枱號']),
-    seat:     hp(['seat','座位','座號']),
-    present:  hp(['present','checkedin','checkin','出席','到場','出席與否','到','在場'])
+    code:     hp(['code','票�?','�?��']),
+    phone:    hp(['phone','mobile','tel','?�話', labelPhone]),
+    name:     hp(['name','姓�?']),
+    dept:     hp(['department','dept','?�述','說�?','?��?','description', labelDept]),
+    table:    hp(['table','??,'�?,'桌�?','?��?']),
+    seat:     hp(['seat','座�?','座�?']),
+    present:  hp(['present','checkedin','checkin','?�席','?�場','?�席?�否','??,'?�場'])
   };
 }
 

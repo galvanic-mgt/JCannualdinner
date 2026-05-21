@@ -1,6 +1,6 @@
 // src/polls_public_firebase.js
-import { FB } from './fb.js';
-import { getCurrentEventId } from './core_firebase.js';
+import { FB } from './fb.js?v=20260521-jcdb';
+import { getCurrentEventId } from './core_firebase.js?v=20260521-jcdb';
 
 /**
  * Poll shape:

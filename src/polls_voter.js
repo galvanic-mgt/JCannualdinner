@@ -1,8 +1,8 @@
 // src/polls_voter.js
 import { getPoll, submitBoundVote } from './polls_public_firebase.js';
-import { setCurrentEventId, getAssets } from './core_firebase.js';
-import { applyBackground } from './ui_background.js';
-import { FB } from './fb.js';
+import { setCurrentEventId, getAssets } from './core_firebase.js?v=20260521-jcdb';
+import { applyBackground } from './ui_background.js?v=20260521-jcdb';
+import { FB } from './fb.js?v=20260521-jcdb';
 
 const $ = s => document.querySelector(s);
 const url = new URL(location.href);

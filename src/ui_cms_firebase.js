@@ -1,11 +1,11 @@
 import { listEvents, createEvent, setCurrentEventId, getCurrentEventId, getEventInfo, saveEventInfo,
          getPeople, setPeople, getPrizes, setPrizes, getCurrentPrizeIdRemote, setCurrentPrizeIdRemote,
-         getQuestions, setQuestions, getAssets, setAssets, getPolls, setPoll, upsertEventMeta } from './core_firebase.js';
-import { addPrize, removePrize, setCurrentPrize, handlePrizeImportCSV, clearAllPrizes, updatePrize } from './stage_prizes_firebase.js';
-import { getRewardRounds, getRewardRoundState, ensureSecondPrizeRound, addRewardRound, addRewardRoundPrize, setCurrentRewardSelection, drawRewardRoundPrize, updateRewardRound } from './reward_rounds_firebase.js';
-import { handleImportCSV, exportCSV } from './roster_firebase.js';
-import { renderStageDraw } from './stage_draw_ui.js';
-import { FB } from './fb.js';
+         getQuestions, setQuestions, getAssets, setAssets, getPolls, setPoll, upsertEventMeta } from './core_firebase.js?v=20260521-jcdb';
+import { addPrize, removePrize, setCurrentPrize, handlePrizeImportCSV, clearAllPrizes, updatePrize } from './stage_prizes_firebase.js?v=20260521-jcdb';
+import { getRewardRounds, getRewardRoundState, ensureSecondPrizeRound, addRewardRound, addRewardRoundPrize, setCurrentRewardSelection, drawRewardRoundPrize, updateRewardRound } from './reward_rounds_firebase.js?v=20260521-jcdb';
+import { handleImportCSV, exportCSV } from './roster_firebase.js?v=20260521-jcdb';
+import { renderStageDraw } from './stage_draw_ui.js?v=20260521-jcdb';
+import { FB } from './fb.js?v=20260521-jcdb';
 
 (function(){
   const btn = document.getElementById('themeToggle');
@@ -24,7 +24,7 @@ import { FB } from './fb.js';
 
   function updateButton(){
     const isLight = document.body.classList.contains('theme-light');
-    btn.textContent = isLight ? '🌙 Dark Mode' : '☀️ Normal Mode';
+    btn.textContent = isLight ? '?? Dark Mode' : '?��?Normal Mode';
   }
 })();
 
@@ -54,8 +54,8 @@ function ensureQR(link){
       <div>
         <div class="muted" style="word-break:break-all">${link}</div>
         <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
-          <button id="copyVoteLink" class="btn">複製投票連結</button>
-          <a class="btn" href="${link}" target="_blank" rel="noopener">開啟投票頁</a>
+          <button id="copyVoteLink" class="btn">複製?�票???</button>
+          <a class="btn" href="${link}" target="_blank" rel="noopener">?��??�票??/a>
         </div>
       </div>
     </div>
@@ -67,7 +67,7 @@ function ensureQR(link){
     });
   }
   document.getElementById('copyVoteLink')?.addEventListener('click', async () => {
-    try { await navigator.clipboard.writeText(link); alert('已複製投票連結'); } catch(e){}
+    try { await navigator.clipboard.writeText(link); alert('已�?製�?票�??'); } catch(e){}
   });
 }
 
@@ -89,11 +89,10 @@ function ensureLandingQR(eid) {
     card.innerHTML = `
       <div class="bar" style="justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap">
         <div>
-          <strong>現場報到 / Landing Page</strong>
+          <strong>?�場?�到 / Landing Page</strong>
           <p class="muted" style="margin-top:4px;font-size:13px">
-            這個連結和 QR 是給現場參加者報到用的：
-            掃描後會開啟 <code>landing.html?event=…</code>，並連接到目前這個活動。
-          </p>
+            ?�個�????QR ?�給?�場?��??�報?�用?��?
+            ?��?後�??��? <code>landing.html?event=??/code>，並??��?�目?�這個活?��?          </p>
         </div>
         <div id="landingQR" style="margin-top:8px"></div>
       </div>
@@ -111,8 +110,8 @@ function ensureLandingQR(eid) {
       <div>
         <div class="muted" style="word-break:break-all">${link}</div>
         <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
-          <button id="copyLandingLink" class="btn">複製 Landing 連結</button>
-          <a class="btn" href="${link}" target="_blank" rel="noopener">開啟 Landing 頁</a>
+          <button id="copyLandingLink" class="btn">複製 Landing ???</button>
+          <a class="btn" href="${link}" target="_blank" rel="noopener">?��? Landing ??/a>
         </div>
       </div>
     </div>
@@ -134,7 +133,7 @@ function ensureLandingQR(eid) {
   document.getElementById('copyLandingLink')?.addEventListener('click', async () => {
     try {
       await navigator.clipboard.writeText(link);
-      alert('已複製 Landing 連結');
+      alert('已�?�?Landing ???');
     } catch (e) {
       // ignore
     }
@@ -148,7 +147,7 @@ function bindLandingButton(){
   btn.addEventListener('click', (e)=>{
     e.preventDefault();
     const eid = getCurrentEventId();
-    if (!eid) { alert('請先在左側選擇一個活動'); return; }
+    if (!eid) { alert('請�??�左?�選?��??�活??); return; }
     window.open(landingPublicBoardLink(eid), '_blank');
   });
 }
@@ -212,8 +211,8 @@ function showPollQR(link){
       <div>
         <div class="muted" style="word-break:break-all">${link}</div>
         <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
-          <button id="copyVoteLink" class="btn">複製投票連結</button>
-          <a class="btn" href="${link}" target="_blank" rel="noopener">開啟投票頁</a>
+          <button id="copyVoteLink" class="btn">複製?�票???</button>
+          <a class="btn" href="${link}" target="_blank" rel="noopener">?��??�票??/a>
         </div>
       </div>
     </div>`;
@@ -224,7 +223,7 @@ function showPollQR(link){
     });
   }
   document.getElementById('copyVoteLink')?.addEventListener('click', async ()=>{
-    try { await navigator.clipboard.writeText(link); alert('已複製投票連結'); } catch(e){}
+    try { await navigator.clipboard.writeText(link); alert('已�?製�?票�??'); } catch(e){}
   });
 }
 
@@ -234,7 +233,7 @@ function createChip(text){
   span.textContent = text;
   span.style.cssText = 'display:inline-flex;align-items:center;padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.08)';
   const x = document.createElement('button');
-  x.textContent = '×';
+  x.textContent = '?';
   x.className = 'btn';
   x.style.cssText = 'margin-left:6px;padding:0 6px;line-height:1.2';
   x.onclick = ()=> span.remove();
@@ -334,10 +333,10 @@ async function ensureUsersLoaded(){
 }
 function requireMasterPassword(){
   const active = getActiveUser();
-  if (!active?.id) { alert('請先登入 Master 帳號'); return false; }
-  if (active.role !== ROLE_MASTER) { alert('只有 Master 可以變更使用者'); return false; }
-  const pwd = prompt('請輸入 Master 密碼以繼續：')?.trim();
-  if (pwd !== (active.password || '')) { alert('密碼不正確'); return false; }
+  if (!active?.id) { alert('請�??�入 Master 帳�?'); return false; }
+  if (active.role !== ROLE_MASTER) { alert('?��? Master ?�以變更使用??); return false; }
+  const pwd = prompt('請輸??Master 密碼以繼續�?')?.trim();
+  if (pwd !== (active.password || '')) { alert('密碼不正�?); return false; }
   return true;
 }
 
@@ -379,29 +378,29 @@ function renderUsersUI(){
   tbody.innerHTML = '';
   if (!users.length) {
     const tr = document.createElement('tr');
-    tr.innerHTML = '<td colspan="4" class="muted">尚未建立使用者，請使用預設帳號登入：administrator / administrator</td>';
+    tr.innerHTML = '<td colspan="4" class="muted">尚未建�?使用?��?請使?��?設帳?�登?��?administrator / administrator</td>';
     tbody.appendChild(tr);
   }
   users.forEach(u=>{
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td>${u.name || ''}<br><small>${u.username || ''}</small></td>
-      <td>${u.role === ROLE_MASTER ? 'Master' : '名單管理'}</td>
-      <td>${(u.events||[]).length ? u.events.join(', ') : '全部'}</td>
+      <td>${u.role === ROLE_MASTER ? 'Master' : '?�單管�?'}</td>
+      <td>${(u.events||[]).length ? u.events.join(', ') : '?�部'}</td>
       <td>
         <button class="btn small" data-edit="${u.id}">編輯</button>
-        <button class="btn small danger" data-del="${u.id}">刪除</button>
+        <button class="btn small danger" data-del="${u.id}">?�除</button>
       </td>`;
     tr.querySelector('[data-edit]')?.addEventListener('click', async ()=>{
       if (!requireMasterPassword()) return;
-      const name = prompt('名稱：', u.name || '')?.trim();
+      const name = prompt('?�稱�?, u.name || '')?.trim();
       if (!name) return;
-      const username = prompt('登入帳號：', u.username || '')?.trim();
+      const username = prompt('?�入帳�?�?, u.username || '')?.trim();
       if (!username) return;
-      const password = prompt('登入密碼：', u.password || '')?.trim();
+      const password = prompt('?�入密碼�?, u.password || '')?.trim();
       if (!password) return;
-      const role = prompt('角色（master / roster）：', u.role || ROLE_ROSTER)?.trim() || ROLE_ROSTER;
-      const eventsRaw = prompt('允許的活動 ID（用逗號分隔，留空=全部）：', (u.events||[]).join(','));
+      const role = prompt('角色（master / roster）�?', u.role || ROLE_ROSTER)?.trim() || ROLE_ROSTER;
+      const eventsRaw = prompt('?�許?�活??ID（用?��??��?，�?�??�部）�?', (u.events||[]).join(','));
       const events = eventsRaw ? eventsRaw.split(',').map(s=>s.trim()).filter(Boolean) : [];
       usersCache = usersCache.map(x => x.id === u.id ? { ...x, name, username, password, role, events } : x);
       try {
@@ -410,7 +409,7 @@ function renderUsersUI(){
         applyRoleGuard();
       } catch (err) {
         console.error('[users] edit failed', err);
-        alert('無法儲存使用者，請確認權限或規則設定。');
+        alert('?��??��?使用?��?請確認�??��?規�?設�???);
       }
     });
     tr.querySelector('[data-del]')?.addEventListener('click', async ()=>{
@@ -422,7 +421,7 @@ function renderUsersUI(){
         applyRoleGuard();
       } catch (err) {
         console.error('[users] delete failed', err);
-        alert('無法刪除使用者，請確認權限或規則設定。');
+        alert('?��??�除使用?��?請確認�??��?規�?設�???);
       }
     });
     tbody.appendChild(tr);
@@ -432,7 +431,7 @@ function renderUsersUI(){
   users.forEach(u=>{
     const opt = document.createElement('option');
     opt.value = u.id;
-    opt.textContent = `${u.name} (${u.role === ROLE_MASTER ? 'Master' : '名單'})`;
+    opt.textContent = `${u.name} (${u.role === ROLE_MASTER ? 'Master' : '?�單'})`;
     if (u.id === active) opt.selected = true;
     sel.appendChild(opt);
   });
@@ -449,10 +448,10 @@ function bindUsers(){
     const name = document.getElementById('userName')?.value.trim();
     const role = document.getElementById('userRole')?.value || ROLE_ROSTER;
     if (!name) return;
-    const username = prompt('設定登入帳號：')?.trim();
-    const password = prompt('設定登入密碼：')?.trim();
+    const username = prompt('設�??�入帳�?�?)?.trim();
+    const password = prompt('設�??�入密碼�?)?.trim();
     if (!username || !password) return;
-    const eventsRaw = prompt('允許的活動 ID（用逗號分隔，留空=全部）：','');
+    const eventsRaw = prompt('?�許?�活??ID（用?��??��?，�?�??�部）�?','');
     const events = eventsRaw ? eventsRaw.split(',').map(s=>s.trim()).filter(Boolean) : [];
     const id = 'u-' + Math.random().toString(36).slice(2,8);
     const newUser = normalizeUser({ id, name, role, username, password, events });
@@ -461,7 +460,7 @@ function bindUsers(){
       await saveUserToDB(newUser);
     } catch (err) {
       console.error('[users] add failed', err);
-      alert('無法新增使用者，請確認權限或規則設定。');
+      alert('?��??��?使用?��?請確認�??��?規�?設�???);
       return;
     }
     document.getElementById('userName').value = '';
@@ -495,7 +494,7 @@ function bindLogin(){
       renderAll?.();
       return true;
     }
-    alert('帳號或密碼錯誤');
+    alert('帳�??��?碼錯�?);
     return false;
   };
   form.addEventListener('submit', (e)=>{
@@ -557,7 +556,7 @@ async function renderEventList(){
     item.onclick = async ()=>{
       const current = getCurrentEventId();
       if (current && current !== ev.id) {
-        const ok = confirm(`即將切換到「${ev.name}」活動，確定嗎？`);
+        const ok = confirm(`?��??��??��?{ev.name}?�活?��?確�??��?`);
         if (!ok) return;
       }
       setCurrentEventId(ev.id);
@@ -569,9 +568,9 @@ async function renderEventList(){
   // Creator stays the same
   const ad = document.createElement('div'); ad.className = 'sidebar-form';
   ad.innerHTML = `
-    <input id="newEventName" placeholder="新增活動名稱" />
-    <input id="newClientName" placeholder="客戶名稱" />
-    <button id="btnAddEvent" class="btn primary">+ 新活動</button>`;
+    <input id="newEventName" placeholder="?��?活�??�稱" />
+    <input id="newClientName" placeholder="客戶?�稱" />
+    <button id="btnAddEvent" class="btn primary">+ ?�活??/button>`;
   el.appendChild(ad);
 
   ad.querySelector('#btnAddEvent').onclick = async ()=>{
@@ -654,7 +653,7 @@ function bindEventInfoSave(){
     });
 
     await upsertEventMeta(eid, {
-      name:g('metaName')||g('evTitle')||'新活動',
+      name:g('metaName')||g('evTitle')||'?�活??,
       client:g('metaClient'),
       listed:document.getElementById('metaListed').checked
     });
@@ -667,8 +666,8 @@ function updateRosterCounters(list = []){
   const checked = Array.isArray(list) ? list.filter(p => p && p.checkedIn).length : 0;
   const totalEl = document.getElementById('rosterCount');
   const chkEl   = document.getElementById('rosterChecked');
-  if (totalEl) totalEl.textContent = `共 ${total} 人`;
-  if (chkEl)   chkEl.textContent   = `已報到：${checked} 人`;
+  if (totalEl) totalEl.textContent = `??${total} 人`;
+  if (chkEl)   chkEl.textContent   = `已報?��?${checked} 人`;
 }
 function setRosterSyncStatus(text){
   const el = document.getElementById('rosterSync');
@@ -676,13 +675,13 @@ function setRosterSyncStatus(text){
   el.textContent = text;
 }
 async function setPeopleWithSync(eid, people){
-  setRosterSyncStatus('更新中…');
+  setRosterSyncStatus('?�新中�?);
   try {
     await setPeople(eid, people);
-    setRosterSyncStatus('已更新');
+    setRosterSyncStatus('已更??);
   } catch (err) {
     console.error('[roster] sync failed', err);
-    setRosterSyncStatus('更新失敗');
+    setRosterSyncStatus('?�新失�?');
     throw err;
   }
 }
@@ -720,7 +719,7 @@ async function exportAttendanceLog(eid){
   const rows = [header.join(',')];
   list.forEach(entry=>{
     const ts = entry?.ts ? new Date(entry.ts).toISOString() : '';
-    const action = entry?.action === 'cancel' ? '取消' : '出席';
+    const action = entry?.action === 'cancel' ? '?��?' : '?�席';
     rows.push([
       ts,
       action,
@@ -736,7 +735,7 @@ async function exportAttendanceLog(eid){
 }
 
 function rewardText(p){
-  const main = p?.prize ? `🎁 ${p.prize}` : '';
+  const main = p?.prize ? `?? ${p.prize}` : '';
   const extra = Object.entries(p?.rewardRounds || {})
     .map(([round, prize]) => `${round}: ${prize}`)
     .join('<br>');
@@ -821,8 +820,8 @@ function renderRow(tr, p, idx, mode){
       <td><input class="in seat"  value="${p.seat||''}"></td>
       <td>${rewardText(p)}</td>
       <td>
-        <button class="btn small save">儲存</button>
-        <button class="btn small cancel">取消</button>
+        <button class="btn small save">?��?</button>
+        <button class="btn small cancel">?��?</button>
       </td>
     `;
     // checkbox persists immediately
@@ -865,8 +864,8 @@ function renderRow(tr, p, idx, mode){
       <td>${rewardText(p)}</td>
       <td>
         <button class="btn small edit">編輯</button>
-        ${p.prize ? '<button class="btn small" data-clear-win>清除得獎</button>' : ''}
-        <button class="btn small danger delete">刪除</button>
+        ${p.prize ? '<button class="btn small" data-clear-win>清除得�?</button>' : ''}
+        <button class="btn small danger delete">?�除</button>
       </td>
     `;
     tr.querySelector('td input[type="checkbox"]').onchange = async (e)=>{
@@ -882,7 +881,7 @@ function renderRow(tr, p, idx, mode){
     tr.addEventListener('dblclick', ()=> renderRow(tr, p, idx, 'edit'));
     tr.querySelector('[data-clear-win]')?.addEventListener('click', async ()=>{
       if (!p.prize) return;
-      const ok = confirm(`確定要移除「${p.name||''}」的得獎紀錄（${p.prize}）？`);
+      const ok = confirm(`確�?要移?��?{p.name||''}?��?得�?紀?��?${p.prize}）�?`);
       if (!ok) return;
       const eidNow = getCurrentEventId();
       if (!eidNow) return;
@@ -907,7 +906,7 @@ function renderRow(tr, p, idx, mode){
       await renderRoster();
     });
     tr.querySelector('.delete').onclick = async ()=>{
-      const ok = confirm(`確定刪除「${p.name||''}」？`);
+      const ok = confirm(`確�??�除??{p.name||''}?��?`);
       if(!ok) return;
       people.splice(idx, 1);
       await setPeopleWithSync(eid, people);
@@ -960,7 +959,7 @@ function bindRoster(){
   // Delete all
   document.getElementById('btnDeleteAllRoster')?.addEventListener('click', async ()=>{
     const eid = getCurrentEventId(); if(!eid) return;
-    const ok = confirm('確定要清空全部名單？此動作無法復原。');
+    const ok = confirm('確�?要�?空全?��??��?此�?作無法復?��?);
     if(!ok) return;
     await setPeopleWithSync(eid, []);
     rosterState.page = 1;
@@ -970,14 +969,14 @@ function bindRoster(){
   // Manual add
   document.getElementById('btnAddManual')?.addEventListener('click', async ()=>{
     const eid = getCurrentEventId(); if(!eid) return;
-    const name = prompt('姓名：')?.trim();
+    const name = prompt('姓�?�?)?.trim();
     if (!name) return;
-    const dept  = prompt('部門 / 描述（可留空）：')?.trim() || '';
-    const phone = prompt('電話（可留空）：')?.trim() || '';
-    const code  = prompt('代碼（可留空）：')?.trim() || '';
-    const table = prompt('枱號（可留空）：')?.trim() || '';
-    const seat  = prompt('座位（可留空）：')?.trim() || '';
-    const checkedIn = confirm('是否標記為「出席」？');
+    const dept  = prompt('?��? / ?�述（可?�空）�?')?.trim() || '';
+    const phone = prompt('?�話（可?�空）�?')?.trim() || '';
+    const code  = prompt('�?��（可?�空）�?')?.trim() || '';
+    const table = prompt('?��?（可?�空）�?')?.trim() || '';
+    const seat  = prompt('座�?（可?�空）�?')?.trim() || '';
+    const checkedIn = confirm('?�否標�??�「出席」�?');
 
     const people = await getPeople(eid);
     people.push({
@@ -1024,7 +1023,7 @@ function bindRoster(){
         rosterState.sortBy = key;
         rosterState.sortDir = 'asc';
       }
-      // visual indicator (▲ ▼)
+      // visual indicator (????
       document.querySelectorAll('#guestTable thead th').forEach(x=>{
         x.dataset.sort = '';
       });
@@ -1068,7 +1067,7 @@ async function renderPrizes(){
     return 0;
   });
 
-  // visual indicator (▲ ▼)
+  // visual indicator (????
   document.querySelectorAll('#prizeTable thead th').forEach(th=>{
     th.dataset.sort = (th.dataset.key === sortBy) ? sortDir : '';
   });
@@ -1084,7 +1083,7 @@ async function renderPrizes(){
       <td>${used}</td>
       <td>
         <button class="btn small" data-edit="${p.id}">編輯</button>
-        <button class="btn small danger" data-del="${p.id}">刪除</button>
+        <button class="btn small danger" data-del="${p.id}">?�除</button>
       </td>`;
     tr.querySelector('input').onchange = async ()=>{
       await setCurrentPrize(p.id);
@@ -1092,22 +1091,22 @@ async function renderPrizes(){
     };
     tr.querySelector('[data-del]').onclick = async ()=>{
       const go = used>0
-        ? confirm(`「${p.name||'此獎項'}」已有 ${used} 位得獎者。\n確定要刪除嗎？`)
-        : confirm(`刪除「${p.name||'此獎項'}」？`);
+        ? confirm(`??{p.name||'此�???}?�已??${used} 位�??�者。\n確�?要刪?��?？`)
+        : confirm(`?�除??{p.name||'此�???}?��?`);
       if(!go) return;
       await removePrize(p.id);
       await renderPrizes();
     };
     tr.querySelector('[data-edit]').onclick = async ()=>{
-      const newNo   = prompt('更新獎品編號：', p.no || '')?.trim() || '';
-      const newName = prompt('更新獎品名稱：', p.name || '')?.trim();
+      const newNo   = prompt('?�新?��?編�?�?, p.no || '')?.trim() || '';
+      const newName = prompt('?�新?��??�稱�?, p.name || '')?.trim();
       if (!newName) return;
-      const newQuotaRaw = prompt('更新名額（數字）：', String(p.quota || 1))?.trim();
+      const newQuotaRaw = prompt('?�新?��?（數字�?�?, String(p.quota || 1))?.trim();
       if (newQuotaRaw === null) return;
       const newQuota = Math.max(0, Number(newQuotaRaw) || 0);
       const quotaChanged = newQuota !== Number(p.quota || 0);
       if (quotaChanged) {
-        const ok = confirm(`名額將改為 ${newQuota}，確定要修改嗎？`);
+        const ok = confirm(`?��?將改??${newQuota}，確定�?修改?��?`);
         if (!ok) return;
       }
       await updatePrize({ id: p.id, name: newName, quota: newQuota, no: newNo });
@@ -1122,7 +1121,7 @@ async function renderPrizes(){
     (prizes||[]).forEach(
       p=>(p.winners||[]).forEach(w=>{
         const li=document.createElement('li');
-        li.textContent=`${w.name}（${p.name}）`;
+        li.textContent=`${w.name}�?{p.name}）`;
         wins.appendChild(li);}));
   }
 }
@@ -1319,7 +1318,7 @@ async function renderAssets(){
   if (!photos.length) {
     const p = document.createElement('p');
     p.className = 'muted';
-    p.textContent = '尚未加入任何相片 URL。';
+    p.textContent = '尚未?�入任�??��? URL??;
     grid.appendChild(p);
     return;
   }
@@ -1334,7 +1333,7 @@ async function renderAssets(){
         <img src="${url}" style="max-width:160px;max-height:120px;display:block;margin-bottom:4px" alt="photo ${i+1}">
       </div>
       <div style="font-size:11px;word-break:break-all;margin-bottom:4px">${url}</div>
-      <button class="btn small" type="button" data-delete-photo="${i}">刪除</button>
+      <button class="btn small" type="button" data-delete-photo="${i}">?�除</button>
     `;
     grid.appendChild(wrap);
   });
@@ -1362,7 +1361,7 @@ function bindAssets(){
   $('saveAssets')?.addEventListener('click', async () => {
     const eid = getCurrentEventId();
     if (!eid) {
-      alert('請先在左側選擇一個活動（Event）。');
+      alert('請�??�左?�選?��??�活?��?Event）�?);
       return;
     }
 
@@ -1382,7 +1381,7 @@ function bindAssets(){
       photos,
       hideLogoOnDraws
     });
-    alert('已儲存素材設定');
+    alert('已儲存�??�設�?);
     await renderAssets();
   });
 
@@ -1390,7 +1389,7 @@ function bindAssets(){
   $('addPhoto')?.addEventListener('click', async () => {
     const eid = getCurrentEventId();
     if (!eid) {
-      alert('請先在左側選擇一個活動（Event）。');
+      alert('請�??�左?�選?��??�活?��?Event）�?);
       return;
     }
 
@@ -1411,7 +1410,7 @@ function bindAssets(){
 function defaultGameBooths(){
   return Array.from({ length: 5 }, (_, i) => ({
     id: `booth_${i + 1}`,
-    name: `遊戲攤位 ${i + 1} (Game Booth ${i + 1})`,
+    name: `?�戲?��? ${i + 1} (Game Booth ${i + 1})`,
     active: true
   }));
 }
@@ -1422,7 +1421,7 @@ function normalizeGameBooths(raw){
     .filter(Boolean)
     .map((booth, i) => ({
       id: String(booth.id || `booth_${i + 1}`),
-      name: String(booth.name || `遊戲攤位 ${i + 1} (Game Booth ${i + 1})`),
+      name: String(booth.name || `?�戲?��? ${i + 1} (Game Booth ${i + 1})`),
       active: booth.active !== false
     }));
 }
@@ -1451,7 +1450,7 @@ async function renderGameBooths(){
   if (linkHost) {
     linkHost.innerHTML = `
       <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
-        <strong>訪客頁面 (Visitor page):</strong>
+        <strong>訪客?�面 (Visitor page):</strong>
         <a href="${visitorLink}" target="_blank" rel="noopener">${visitorLink}</a>
         <span id="gameBoothVisitorQR"></span>
       </div>
@@ -1473,10 +1472,10 @@ async function renderGameBooths(){
     card.innerHTML = `
       <div class="game-booth-head">
         <label>
-          <span>攤位名稱 (Booth name)</span>
+          <span>?��??�稱 (Booth name)</span>
           <input data-game-booth-name value="">
         </label>
-        <button class="btn small danger" type="button" data-game-booth-delete>刪除 (Delete)</button>
+        <button class="btn small danger" type="button" data-game-booth-delete>?�除 (Delete)</button>
       </div>
       <div class="game-booth-qr" id="gameBoothQR_${index}"></div>
       <a href="${link}" target="_blank" rel="noopener">${link}</a>
@@ -1496,7 +1495,7 @@ async function renderGameBooths(){
 function collectGameBoothCards(){
   return Array.from(document.querySelectorAll('#gameBoothList .game-booth-card')).map((card, index) => ({
     id: card.dataset.boothId || `booth_${index + 1}`,
-    name: card.querySelector('[data-game-booth-name]')?.value.trim() || `遊戲攤位 ${index + 1} (Game Booth ${index + 1})`,
+    name: card.querySelector('[data-game-booth-name]')?.value.trim() || `?�戲?��? ${index + 1} (Game Booth ${index + 1})`,
     active: true
   }));
 }
@@ -1507,7 +1506,7 @@ function bindGameBooths(){
     if (!eid) return;
     const booths = collectGameBoothCards();
     const stamp = Date.now().toString(36);
-    booths.push({ id: `booth_${stamp}`, name: `遊戲攤位 ${booths.length + 1} (Game Booth ${booths.length + 1})`, active: true });
+    booths.push({ id: `booth_${stamp}`, name: `?�戲?��? ${booths.length + 1} (Game Booth ${booths.length + 1})`, active: true });
     await setGameBooths(eid, booths);
     await renderGameBooths();
   });
@@ -1548,7 +1547,7 @@ async function renderPolls(){
   if (!polls || !Object.keys(polls).length) {
     const li = document.createElement('li');
     li.className = 'muted';
-    li.textContent = '尚未建立投票';
+    li.textContent = '尚未建�??�票';
     list.appendChild(li);
     return;
   }
@@ -1568,19 +1567,19 @@ async function renderPolls(){
 
     const li = document.createElement('li');
     const total = Object.values(p.votes || {}).reduce((a,b)=> a + Number(b || 0), 0);
-    const optionsText = (p.options || []).map(o => o.text).join(' / ') || '—';
+    const optionsText = (p.options || []).map(o => o.text).join(' / ') || '??;
 
     const voteUrl   = makeLink('vote.html',        pollId);
     const publicUrl = makeLink('public_poll.html', pollId);
 
     li.innerHTML = `
-      <strong>${p.question || p.q || '(未命名)'}</strong>
-      <small>(共 ${total} 票)</small>
+      <strong>${p.question || p.q || '(?�命??'}</strong>
+      <small>(??${total} �?</small>
       <div class="muted">${optionsText}</div>
       <div class="bar" style="gap:6px;margin-top:6px;flex-wrap:wrap">
         <button class="btn" data-act="qr">QR</button>
-        <a class="btn" data-act="public" href="${publicUrl}" target="_blank" rel="noopener">公眾畫面</a>
-        <button class="btn" data-act="use">使用此問題</button>
+        <a class="btn" data-act="public" href="${publicUrl}" target="_blank" rel="noopener">?�眾?�面</a>
+        <button class="btn" data-act="use">使用此�?�?/button>
       </div>
     `;
 
@@ -1594,8 +1593,8 @@ async function renderPolls(){
           <div>
             <div class="muted" style="word-break:break-all">${voteUrl}</div>
             <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
-              <button id="copyVoteLink" class="btn">複製投票連結</button>
-              <a class="btn" href="${voteUrl}" target="_blank" rel="noopener">開啟投票頁</a>
+              <button id="copyVoteLink" class="btn">複製?�票???</button>
+              <a class="btn" href="${voteUrl}" target="_blank" rel="noopener">?��??�票??/a>
             </div>
           </div>
         </div>
@@ -1608,7 +1607,7 @@ async function renderPolls(){
       }
       const copyBtn = document.getElementById('copyVoteLink');
       if (copyBtn) copyBtn.addEventListener('click', async () => {
-        try { await navigator.clipboard.writeText(voteUrl); alert('已複製投票連結'); } catch(e) {}
+        try { await navigator.clipboard.writeText(voteUrl); alert('已�?製�?票�??'); } catch(e) {}
       });
     };
 
@@ -1623,7 +1622,7 @@ async function renderPolls(){
     if (useBtn) useBtn.addEventListener('click', async () => {
       try {
         if (window.FB && window.FB.patch) await window.FB.patch(`/events/${eid}/ui`, { currentPollId: pollId, showPollQR: true });
-        alert('已設為目前問題');
+        alert('已設?�目?��?�?);
         bindPollPicker(); // refresh dropdown to reflect selection
       } catch(_){}
     });
@@ -1657,7 +1656,7 @@ function bindPolls(){
     }
 
     if (!question || !opts.length) {
-      alert('請輸入問題與至少一個選項');
+      alert('請輸?��?題�??��?一?�選??);
       return;
     }
 
@@ -1670,7 +1669,7 @@ function bindPolls(){
     document.getElementById('optChips')?.replaceChildren(); // clear chips if used
 
     await renderPolls();
-    await renderPollManager(); // keep 投票管理 list in sync
+    await renderPollManager(); // keep ?�票管�? list in sync
     await bindPollPicker(); // refresh picker for new poll
   });
 }
@@ -1705,13 +1704,13 @@ async function bindPollPicker(){
   if (entries.length === 0) {
     const opt = document.createElement('option');
     opt.value = '';
-    opt.textContent = '（尚未建立投票）';
+    opt.textContent = '（�??�建立�?票�?';
     sel.appendChild(opt);
   } else {
     for (const [pid, p] of entries) {
       const opt = document.createElement('option');
       opt.value = pid; // use RTDB key as id
-      const title = (p && (p.question || p.q)) ? (p.question || p.q) : '(未命名)';
+      const title = (p && (p.question || p.q)) ? (p.question || p.q) : '(?�命??';
       opt.textContent = title;
       if (pid === currentId) opt.selected = true;
       sel.appendChild(opt);
@@ -1729,7 +1728,7 @@ async function bindPollPicker(){
         if (window.FB && window.FB.patch) {
           await window.FB.patch(`/events/${eid}/ui`, { currentPollId: pid, showPollQR: true });
         }
-        alert('已設為目前問題');
+        alert('已設?�目?��?�?);
       } catch (e) { /* ignore */ }
     };
   }
@@ -1753,8 +1752,8 @@ async function bindPollPicker(){
           '<div>' +
             '<div class="muted" style="word-break:break-all">' + link + '</div>' +
             '<div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">' +
-              '<button id="copyVoteLink" class="btn">複製投票連結</button>' +
-              '<a class="btn" href="' + link + '" target="_blank" rel="noopener">開啟投票頁</a>' +
+              '<button id="copyVoteLink" class="btn">複製?�票???</button>' +
+              '<a class="btn" href="' + link + '" target="_blank" rel="noopener">?��??�票??/a>' +
             '</div>' +
           '</div>' +
         '</div>'
@@ -1769,7 +1768,7 @@ async function bindPollPicker(){
       const copyBtn = document.getElementById('copyVoteLink');
       if (copyBtn) {
         copyBtn.addEventListener('click', async function(){
-          try { await navigator.clipboard.writeText(link); alert('已複製投票連結'); } catch (e) {}
+          try { await navigator.clipboard.writeText(link); alert('已�?製�?票�??'); } catch (e) {}
         });
       }
     };
@@ -1783,7 +1782,7 @@ async function bindPollPicker(){
             showPollQR: false
           });
         }
-        alert('已切換回抽獎畫面');
+        alert('已�??��??��??�面');
       } catch (e) {
         console.warn('[poll] hide QR public failed', e);
       }
@@ -1802,7 +1801,7 @@ async function bindPollPicker(){
             showPollQR: true
           });
         }
-        alert('已在公眾畫面顯示此 QR');
+        alert('已在?�眾?�面顯示�?QR');
       } catch (e) {
         console.warn('[poll] show QR public failed', e);
       }
@@ -1823,7 +1822,7 @@ async function bindPollPicker(){
             pollResultsStep: 0
           });
         }
-        alert('已觸發公眾結果動畫');
+        alert('已觸?�公?��??��???);
       } catch (e) {
         console.warn('[poll] play results failed', e);
       }
@@ -1854,7 +1853,7 @@ async function bindPollPicker(){
           pollResultsStep: 0,
           showPollQR: false
         });
-        alert('已清除結果模式，恢復抽獎畫面');
+        alert('已�??��??�模式�??�復?��??�面');
       } catch (e) {
         console.warn('[poll] clear results failed', e);
       }
@@ -1884,7 +1883,7 @@ function bindPollComposer(){
     const eid = getCurrentEventId();
     const q = inputQ.value.trim();
     const opts = getChipValues();
-    if (!eid || !q || !opts.length) { alert('請輸入問題與至少一個選項'); return; }
+    if (!eid || !q || !opts.length) { alert('請輸?��?題�??��?一?�選??); return; }
     const poll = {
       id: makeId('p'),
       question: q,
@@ -1897,7 +1896,7 @@ function bindPollComposer(){
     // reset UI
     inputQ.value = ''; wrap.innerHTML = '';
     await renderPolls();
-    await renderPollManager(); // keep 投票管理 list in sync
+    await renderPollManager(); // keep ?�票管�? list in sync
     await bindPollPicker(); // refresh picker with new poll
   });
 
@@ -2026,7 +2025,7 @@ function bindPrizeActions(){
     }
   });
 
-  // 新增獎品
+  // ?��??��?
   document.getElementById('addPrize')?.addEventListener('click', async ()=>{
     const nameEl = document.getElementById('newPrizeName');
     const quotaEl = document.getElementById('newPrizeQuota');
@@ -2039,10 +2038,10 @@ function bindPrizeActions(){
     await renderPrizes();
   });
 
-  // 匯入獎品
+  // ?�入?��?
   document.getElementById('btnImportPrizeCSV')?.addEventListener('click', ()=>{
     const f = document.getElementById('prizeCsvFile');
-    if(!f?.files?.[0]){ alert('請先選擇 CSV 檔案'); return; }
+    if(!f?.files?.[0]){ alert('請�??��? CSV 檔�?'); return; }
     handlePrizeImportCSV(f.files[0], async ()=>{
       prizeState.sortBy = 'name';
       prizeState.sortDir = 'asc';
@@ -2050,9 +2049,9 @@ function bindPrizeActions(){
     });
   });
 
-  // 清空獎品
+  // 清空?��?
   document.getElementById('btnDeleteAllPrizes')?.addEventListener('click', async ()=>{
-    const ok = confirm('確定要刪除所有獎品與得獎紀錄？此動作無法復原。');
+    const ok = confirm('確�?要刪?��??��??��?得�?紀?��?此�?作無法復?��?);
     if(!ok) return;
     await clearAllPrizes();
     prizeState.sortBy = 'name';
@@ -2060,7 +2059,7 @@ function bindPrizeActions(){
     await renderPrizes();
   });
 
-  // 排序
+  // ?��?
   document.querySelectorAll('#prizeTable thead th[data-sortable="true"]')?.forEach(th=>{
     th.addEventListener('click', ()=>{
       const key = th.dataset.key;
@@ -2090,7 +2089,7 @@ export async function renderPollManager() {
 
   const entries = Object.entries(polls || {});
   if (!entries.length) {
-    list.innerHTML = '<li class="muted">尚未建立任何投票問題</li>';
+    list.innerHTML = '<li class="muted">尚未建�?任�??�票?��?</li>';
     return;
   }
 
@@ -2100,11 +2099,11 @@ export async function renderPollManager() {
     li.className = 'poll-item';
     li.innerHTML = `
       <div style="display:flex;flex-direction:column;gap:4px">
-        <input class="poll-question" value="${poll.question || ''}" placeholder="輸入問題..." />
+        <input class="poll-question" value="${poll.question || ''}" placeholder="輸入?��?..." />
         <div class="poll-options"></div>
         <div class="bar" style="gap:6px;margin-top:4px;flex-wrap:wrap">
-          <button class="btn" data-act="save">💾 儲存</button>
-          <button class="btn" data-act="delete" style="background:#b71c1c;color:white">刪除</button>
+          <button class="btn" data-act="save">?�� ?��?</button>
+          <button class="btn" data-act="delete" style="background:#b71c1c;color:white">?�除</button>
         </div>
       </div>
     `;
@@ -2120,17 +2119,17 @@ export async function renderPollManager() {
         const isLast = i === options.length - 1;
         return `
         <div class="bar poll-opt-row" style="gap:4px;align-items:center" data-id="${optId}">
-          <input class="poll-opt" data-field="text" value="${text}" placeholder="選項 ${i + 1}" />
-          <input class="poll-opt-img" data-field="img" value="${img}" placeholder="圖片 URL（可選）" style="flex:1; min-width:160px" />
+          <input class="poll-opt" data-field="text" value="${text}" placeholder="?��? ${i + 1}" />
+          <input class="poll-opt-img" data-field="img" value="${img}" placeholder="?��? URL（可?��?" style="flex:1; min-width:160px" />
           ${img ? `<img src="${img}" style="width:48px;height:48px;object-fit:cover;border-radius:8px;border:1px solid rgba(255,255,255,.12)" alt="">` : ''}
-          ${isLast ? '<button class="btn btn-small" data-act="addopt">＋</button>' : ''}
+          ${isLast ? '<button class="btn btn-small" data-act="addopt">�?/button>' : ''}
         </div>`;
       })
       .join('') || `
         <div class="bar poll-opt-row" style="gap:4px;align-items:center" data-id="o0">
-          <input class="poll-opt" data-field="text" value="" placeholder="選項 1" />
-          <input class="poll-opt-img" data-field="img" value="" placeholder="圖片 URL（可選）" style="flex:1; min-width:160px" />
-          <button class="btn btn-small" data-act="addopt">＋</button>
+          <input class="poll-opt" data-field="text" value="" placeholder="?��? 1" />
+          <input class="poll-opt-img" data-field="img" value="" placeholder="?��? URL（可?��?" style="flex:1; min-width:160px" />
+          <button class="btn btn-small" data-act="addopt">�?/button>
         </div>`;
 
     // Bind actions
@@ -2151,16 +2150,16 @@ export async function renderPollManager() {
           })
           .filter(Boolean);
 
-        if (!question || !opts.length) return alert('請輸入問題與至少一個選項');
+        if (!question || !opts.length) return alert('請輸?��?題�??��?一?�選??);
 
         const newPoll = { id: pid, question, options: opts, votes: poll.votes || {} };
         await FB.put(`/events/${eid}/polls/${pid}`, newPoll);
-        alert('已儲存');
+        alert('已儲�?);
         renderPollManager();
       }
 
       if (act === 'delete') {
-        if (!confirm('確定刪除此問題？')) return;
+        if (!confirm('確�??�除此�?題�?')) return;
         await FB.put(`/events/${eid}/polls/${pid}`, null);
         renderPollManager();
       }
@@ -2175,9 +2174,9 @@ export async function renderPollManager() {
         div.style.alignItems = 'center';
         div.dataset.id = `o${Date.now().toString(36)}`;
         div.innerHTML = `
-          <input class="poll-opt" data-field="text" value="" placeholder="選項 ${n}" />
-          <input class="poll-opt-img" data-field="img" value="" placeholder="圖片 URL（可選）" style="flex:1; min-width:160px" />
-          <button class="btn btn-small" data-act="addopt">＋</button>
+          <input class="poll-opt" data-field="text" value="" placeholder="?��? ${n}" />
+          <input class="poll-opt-img" data-field="img" value="" placeholder="?��? URL（可?��?" style="flex:1; min-width:160px" />
+          <button class="btn btn-small" data-act="addopt">�?/button>
         `;
         bar.appendChild(div);
         // ensure only the last row keeps the add button
@@ -2245,7 +2244,7 @@ export async function bootCMS(){
   const navBtns = document.querySelectorAll('#cmsNav .nav-item');
   navBtns.forEach(b => b.addEventListener('click', () => show(b.dataset.target)));
 
-  // core binders (don’t crash if any is undefined)
+  // core binders (don?�t crash if any is undefined)
   await maybe(bindEventInfoSave);
   await maybe(bindRoster);
   await maybe(bindPrizeActions);
@@ -2262,7 +2261,7 @@ export async function bootCMS(){
   try { await renderPollManager(); } catch (e) { console.error(e); }
 
 
-  // new helpers you recently added — guard them too
+  // new helpers you recently added ??guard them too
   await maybe(bindPollComposer);   // ok if not present
   await maybe(bootEventsAdmin);    // ok if not present
   await maybe(bindPollPicker);     // ok if not present
@@ -2271,7 +2270,7 @@ export async function bootCMS(){
   if (typeof renderAll === 'function') {
     await renderAll();
   } else {
-    // legacy compatibility: render per-tab if needed (won’t throw)
+    // legacy compatibility: render per-tab if needed (won?�t throw)
     await maybe(renderEventInfo);
     await maybe(renderRoster);
     await maybe(renderPrizes);

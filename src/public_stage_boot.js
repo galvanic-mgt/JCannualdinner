@@ -1,8 +1,8 @@
 // src/public_stage_boot.js
-import { setCurrentEventId } from './core_firebase.js';
-import { FB } from './fb.js';
-import { renderStageDraw } from './stage_draw_ui.js';
-import { applyBackground } from './ui_background.js';
+import { setCurrentEventId } from './core_firebase.js?v=20260521-jcdb';
+import { FB } from './fb.js?v=20260521-jcdb';
+import { renderStageDraw } from './stage_draw_ui.js?v=20260521-jcdb';
+import { applyBackground } from './ui_background.js?v=20260521-jcdb';
 
 function getEventId() {
   const u = new URL(location.href);
@@ -71,7 +71,7 @@ async function refreshAssets(eid) {
 }
 
 /**
- * Keep 現正抽獎： and 此獎尚餘： in sync on the public board
+ * Keep ?�正?��?�?and 此�?尚�?�?in sync on the public board
  */
 async function refreshCurrentPrize(eid) {
   if (!eid) return;
@@ -101,7 +101,7 @@ async function refreshCurrentPrize(eid) {
           const taken = Array.isArray(prize.winners) ? prize.winners.length : 0;
           leftEl.textContent = Math.max(0, quota - taken);
         } else {
-          leftEl.textContent = '—';
+          leftEl.textContent = '??;
         }
       }
       return;
@@ -110,7 +110,7 @@ async function refreshCurrentPrize(eid) {
     const prize   = (prizes || []).find(p => p && p.id === curId) || null;
 
     if (nameEl) {
-      nameEl.textContent = prize ? (prize.name || '—') : '—';
+      nameEl.textContent = prize ? (prize.name || '??) : '??;
     }
 
     if (leftEl) {
@@ -120,7 +120,7 @@ async function refreshCurrentPrize(eid) {
         const left   = Math.max(0, quota - taken);
         leftEl.textContent = left;
       } else {
-        leftEl.textContent = '—';
+        leftEl.textContent = '??;
       }
     }
   } catch (e) {

@@ -1,4 +1,4 @@
-import { FB } from './core_firebase.js';
+import { FB } from './core_firebase.js?v=20260521-jcdb';
 
 function getQueryParam(name) {
   const params = new URLSearchParams(window.location.search);

@@ -1,9 +1,9 @@
-// landing.js — event landing page (check-in + event visuals)
+﻿// landing.js ??event landing page (check-in + event visuals)
 // Standalone file: uses Firebase Realtime Database REST API directly, no imports.
 
 // === CONFIG ===
 // NOTE: this should match src/config.js.
-const FIREBASE_BASE = "https://eva-lucky-draw-default-rtdb.asia-southeast1.firebasedatabase.app";
+const FIREBASE_BASE = "https://jc-annualdinner-default-rtdb.asia-southeast1.firebasedatabase.app";
 
 // Helper to build URLs like `${FIREBASE_BASE}/events/e123/info.json`
 function dbUrl(path) {
@@ -53,7 +53,7 @@ let boothStream = null;
 let boothScanTimer = null;
 let boothScanCanvas = null;
 const GUEST_SESSION_MS = 6 * 60 * 60 * 1000;
-const boothDefaultName = (index) => `遊戲攤位 ${index} (Game Booth ${index})`;
+const boothDefaultName = (index) => `??支? ${index} (Game Booth ${index})`;
 
 function defaultGameBooths() {
   return Array.from({ length: 5 }, (_, i) => ({
@@ -131,7 +131,7 @@ function clearGuestSession() {
   const howToGetThere = document.getElementById("howToGetThereSection");
   if (howToGetThere) howToGetThere.style.display = "";
   renderGameBoothStatus();
-  showLandingMessage("已登出測試工作階段。你可以再次按報到 (Attend)。Session signed out. You can press Attend again for testing.", false);
+  showLandingMessage("撌脩?箸葫閰血極雿?畾萸??臭誑?活???(Attend)?ession signed out. You can press Attend again for testing.", false);
 }
 
 function currentGuest() {
@@ -144,8 +144,8 @@ function seatTextForGuest(guest) {
   const seat = guest.seat || "";
   return (table || seat)
     ? [
-        table ? `枱號：${table} (Table: ${table})` : "",
-        seat ? `座位：${seat} (Seat: ${seat})` : ""
+        table ? `?梯?嚗?{table} (Table: ${table})` : "",
+        seat ? `摨找?嚗?{seat} (Seat: ${seat})` : ""
       ].filter(Boolean).join("  ")
     : "";
 }
@@ -197,7 +197,7 @@ function renderGameBoothStatus() {
     const status = document.createElement("strong");
     const participated = Boolean(completed[booth.id]);
     status.className = participated ? "lp-booth-participated" : "lp-booth-not-participated";
-    status.textContent = participated ? "已參與 (Participated)" : "尚未參與 (Not participated yet)";
+    status.textContent = participated ? "撌脣???(Participated)" : "撠?? (Not participated yet)";
     row.append(name, status);
     host.appendChild(row);
   });
@@ -205,13 +205,13 @@ function renderGameBoothStatus() {
 
 async function markGameBoothComplete(rawCode) {
   if (currentGuestIndex < 0) {
-    showLandingMessage("請先按報到 (Attend)，然後再掃描遊戲攤位。Please mark yourself present before scanning game booths.", true);
+    showLandingMessage("隢????(Attend)嚗敺?????支??lease mark yourself present before scanning game booths.", true);
     return false;
   }
   const boothId = boothIdFromScan(rawCode);
   const booth = landingBooths.find((item) => item.id === boothId);
   if (!booth) {
-    showLandingMessage("此 QR Code 不是有效的遊戲攤位。This QR code is not for a valid game booth.", true);
+    showLandingMessage("甇?QR Code 銝?????脫雿his QR code is not for a valid game booth.", true);
     return false;
   }
 
@@ -231,19 +231,19 @@ async function markGameBoothComplete(rawCode) {
     })
   ]);
   renderGameBoothStatus();
-  showLandingMessage(`${booth.name}: 已參與 (Participated)`, false);
+  showLandingMessage(`${booth.name}: 撌脣???(Participated)`, false);
   return true;
 }
 
 async function startBoothScanner() {
   if (currentGuestIndex < 0) {
-    showLandingMessage("請先按報到 (Attend)，然後再開啟相機。Please mark yourself present before opening the camera.", true);
+    showLandingMessage("隢????(Attend)嚗敺????豢??lease mark yourself present before opening the camera.", true);
     return;
   }
   const canUseNativeDetector = "BarcodeDetector" in window;
   const canUseJsQr = typeof window.jsQR === "function";
   if (!canUseNativeDetector && !canUseJsQr) {
-    showLandingMessage("此瀏覽器不支援相機 QR 掃描，請在下方貼上 QR 連結或代碼。Camera QR scanning is not supported in this browser. Paste the QR link or code below.", true);
+    showLandingMessage("甇斤汗?其??舀?豢? QR ??嚗??其??寡票銝?QR ????誨蝣潦amera QR scanning is not supported in this browser. Paste the QR link or code below.", true);
     return;
   }
 
@@ -308,7 +308,7 @@ function bindGameBoothControls() {
   document.getElementById("startBoothScanner")?.addEventListener("click", () => {
     startBoothScanner().catch((err) => {
       console.error(err);
-      showLandingMessage("未能開啟相機，請允許相機權限，或在下方貼上 QR 連結或代碼。Unable to open camera. Please allow camera access or paste the QR link or code below.", true);
+      showLandingMessage("?芾???豢?嚗??迂?豢?甈?嚗??其??寡票銝?QR ????誨蝣潦nable to open camera. Please allow camera access or paste the QR link or code below.", true);
     });
   });
   document.getElementById("manualBoothSubmit")?.addEventListener("click", async () => {
@@ -328,7 +328,7 @@ async function loadEventHeader(eid) {
   const pick = (val, fallback) =>
     (typeof val === "string" && val.trim() ? val.trim() : fallback);
 
-  if ($("evTitle"))     $("evTitle").textContent    = info.title    || "活動";
+  if ($("evTitle"))     $("evTitle").textContent    = info.title    || "瘣餃?";
   if ($("evDateTime"))  $("evDateTime").textContent = info.dateTime || "";
   if ($("evVenue"))     $("evVenue").textContent    = info.venue    || "";
   if ($("evAddress"))   $("evAddress").textContent  = info.address  || "";
@@ -348,9 +348,9 @@ async function loadEventHeader(eid) {
   if (trainBlock)   trainBlock.style.display   = hasTrain ? '' : 'none';
   if (parkingBlock) parkingBlock.style.display = hasParking ? '' : 'none';
   if ($("evNotes"))     $("evNotes").textContent    = info.notes    || "";
-  // Landing copy (editable via CMS 活動資料)
-  const labelPhone = info.labelPhone || "電話";
-  const labelDept  = info.labelDept  || "代號";
+  // Landing copy (editable via CMS 瘣餃?鞈?)
+  const labelPhone = info.labelPhone || "?餉店";
+  const labelDept  = info.labelDept  || "隞??";
   const titleEl = document.getElementById("checkinTitle");
   const labelEl = document.getElementById("checkinLabel");
   const inputEl = document.getElementById("codeDigits");
@@ -465,18 +465,18 @@ function attachCheckin(eid) {
 
     const raw = input.value.trim();
     if (!raw) {
-      showMessage("請輸入電話或代碼。", true);
+      showMessage("請輸入電話或代號。Please enter your phone or code.", true);
       return;
     }
 
-    showMessage("查詢中…", false);
+    showMessage("正在查核，請稍候。Checking, please wait.", false);
     if (seatCard) seatCard.style.display = "none";
     if (seatInfoEl) seatInfoEl.textContent = "";
 
     try {
       landingPeople = (await dbGet(`/events/${eid}/people`)) || [];
       if (!Array.isArray(landingPeople) || landingPeople.length === 0) {
-        showMessage("找不到名單，請向職員查詢。", true);
+        showMessage("未能讀取參加者名單，請向工作人員查詢。Could not load the guest list. Please contact event staff.", true);
         return;
       }
 
@@ -504,50 +504,32 @@ function attachCheckin(eid) {
       }
 
       if (foundIndex === -1 || !found) {
-        showMessage("找不到相符的記錄，請檢查輸入或向職員查詢。", true);
+        showMessage("找不到你的報到資料，請檢查輸入或向工作人員查詢。Record not found. Please check your input or contact event staff.", true);
         return;
       }
 
-      // Mark as present (checkedIn = true)
       await dbPatch(`/events/${eid}/people/${foundIndex}`, { checkedIn: true });
       currentGuestIndex = foundIndex;
       landingPeople[foundIndex] = { ...found, checkedIn: true };
       saveGuestSession();
 
-      const name    = found.name || "";
-      const table   = found.table || "";
-      const seat    = found.seat || "";
-      const seatStr = (table || seat)
-        ? [table ? `枱：${table}` : "", seat ? `座位：${seat}` : ""]
-            .filter(Boolean)
-            .join(" · ")
-        : "";
-
-      const successMsg = `✅ 已為 ${name || "來賓"} 登記出席，歡迎！`;
+      const name = found.name || "Guest";
+      const successMsg = `已成功報到：${name}。Attendance confirmed: ${name}.`;
       const sessionSeatStr = seatTextForGuest(found);
       showMessage(successMsg, false);
-
-      if (seatCard && seatInfoEl) {
-        if (seatStr) {
-          seatInfoEl.textContent = seatStr;
-          seatCard.style.display = "block";
-        } else {
-          seatCard.style.display = "none";
-        }
-      }
       renderSeatInfo(found);
       showGameBoothPanel();
+
       const boothFromUrl = getQueryParam("booth");
       if (boothFromUrl) await markGameBoothComplete(boothFromUrl);
       const popupMsg = sessionSeatStr ? `${successMsg}\n${sessionSeatStr}` : successMsg;
       alert(popupMsg);
 
-      // Optional: clear input after success
       input.value = "";
 
     } catch (err) {
       console.error("Check-in failed", err);
-      showMessage("系統錯誤，請稍後再試或向職員查詢。", true);
+      showMessage("系統暫時未能完成報到，請稍後再試或向工作人員查詢。Check-in failed. Please try again or contact event staff.", true);
     }
   });
 }
@@ -559,10 +541,10 @@ async function bootLanding() {
   currentEventId = eid || "";
 
   if (!eid) {
-    console.warn("No event ID in URL (?event=...) – landing page cannot bind to an event.");
+    console.warn("No event ID in URL (?event=...) ??landing page cannot bind to an event.");
     const msgEl = document.getElementById("checkinMsg");
     if (msgEl) {
-      msgEl.textContent = "（缺少活動編號，請從正確 QR Code 開啟此頁。）";
+      msgEl.textContent = "嚗撩撠暑?楊??隢?甇?Ⅱ QR Code ??甇日???";
     }
     return;
   }
@@ -581,7 +563,7 @@ async function bootLanding() {
     console.error("Failed to load event info", err);
     const msgEl = document.getElementById("checkinMsg");
     if (msgEl) {
-      msgEl.textContent = "載入活動資料時出錯，請稍後再試。";
+      msgEl.textContent = "未能載入活動資料，請稍後再試。Could not load event information. Please try again later.";
     }
   }
 

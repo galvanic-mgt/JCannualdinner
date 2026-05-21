@@ -1,5 +1,5 @@
 // Shared helper to apply a full-page background layer (dimmed) from assets.
-import { getAssets } from './core_firebase.js';
+import { getAssets } from './core_firebase.js?v=20260521-jcdb';
 
 /**
  * Ensures there is a fixed, bottom-most background layer and sets its image.

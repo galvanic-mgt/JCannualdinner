@@ -1,6 +1,6 @@
 // Simple public-side listener for /ui/stageState
-import { FB } from './fb.js';
-import { renderBatchGrid as renderBatchGridCore, fireConfettiAtCards } from './stage_draw_logic.js';
+import { FB } from './fb.js?v=20260521-jcdb';
+import { renderBatchGrid as renderBatchGridCore, fireConfettiAtCards } from './stage_draw_logic.js?v=20260521-jcdb';
 
 function getEventId() {
   const u = new URL(location.href);
@@ -40,7 +40,7 @@ async function renderPollQRInGrid(grid, eid, ui){
   grid.innerHTML = `
     <div class="qr-panel">
       <div class="qr-box-inline">
-        <div class="qr-title">現正投票：<span>${title}</span></div>
+        <div class="qr-title">?�正?�票�?span>${title}</span></div>
         <div id="publicPollQRCanvas"></div>
         <div class="qr-link">${link}</div>
       </div>
@@ -80,18 +80,18 @@ function renderResultsStep(grid){
   grid.innerHTML = `
     <div class="results-chart">
       <div class="results-inner">
-        <div class="results-title">現正投票：${title}</div>
+        <div class="results-title">?�正?�票�?{title}</div>
         <div class="results-bars">
           ${items.map((it, i) => `
             <div class="rBar">
-              <div class="crown">${i === items.length - 1 ? '👑' : ''}</div>
+              <div class="crown">${i === items.length - 1 ? '??' : ''}</div>
               <div class="rFillWrap"><div class="rFill" data-count="${it.count}" data-target="${Math.max(6, Math.round((it.count / max) * 100))}"></div></div>
               <div class="rLabel" data-text="${it.text}"></div>
               <div class="rCount"></div>
             </div>
           `).join('')}
         </div>
-        <div class="results-status">點擊畫面播放下一個${idx >= items.length ? ' — 動畫完畢' : ''}</div>
+        <div class="results-status">點�??�面?�放下�???{idx >= items.length ? ' ???�畫完畢' : ''}</div>
       </div>
     </div>
   `;
@@ -188,7 +188,7 @@ async function refreshStage() {
     grid.innerHTML = '';
 
     if (!state || !state.winners) {
-      // nothing drawn yet — keep grid empty
+      // nothing drawn yet ??keep grid empty
       grid.innerHTML = '';
       lastWinnersKey = null;
       return;

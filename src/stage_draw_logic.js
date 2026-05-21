@@ -1,7 +1,7 @@
-// src/stage_draw_logic.js  — full file
+// src/stage_draw_logic.js  ??full file
 
 // --- Firebase REST helper (you already have this) ---
-import { FB } from './fb.js';
+import { FB } from './fb.js?v=20260521-jcdb';
 
 // Simple array-based reroll log (writes under /events/{eid}/rerollLog)
 async function addRerollLog(eid, entry){
@@ -25,10 +25,10 @@ async function fetchRerollLog(eid, limit=50){
 import {
   getCurrentEventId, getEventInfo, getPrizes, getCurrentPrizeIdRemote,
   setCurrentPrizeIdRemote, setPrizes, getPeople, setPeople
-} from './core_firebase.js';
+} from './core_firebase.js?v=20260521-jcdb';
 
 // draw core (persists winners + people)
-import { drawBatch as coreDrawBatch } from './stage_prizes_firebase.js';
+import { drawBatch as coreDrawBatch } from './stage_prizes_firebase.js?v=20260521-jcdb';
 
 // --- UI state (not saved) ---
 export const drawState = {
@@ -104,7 +104,7 @@ export function fitWinnerCardText(root, opts = {}) {
 }
 
 /* ============================================================
-   Winners grid renderer — matches your wireframes exactly
+   Winners grid renderer ??matches your wireframes exactly
    - Single winner: one big centered card
    - Many winners: responsive grid, each card has a bottom-right reroll btn
 ============================================================ */
@@ -115,7 +115,7 @@ export function renderBatchGrid(gridEl, batch, mode){
   const count = Math.max(0, Array.isArray(batch) ? batch.length : 0);
   const capped = Math.min(10, Math.max(1, count || 1));
 
-  // apply winners-N class for layout (1–10)
+  // apply winners-N class for layout (1??0)
   const prev = Array.from(gridEl.classList).filter(c => /^winners-\d+$/.test(c));
   prev.forEach(c => gridEl.classList.remove(c));
   gridEl.classList.add(`winners-${capped}`);
@@ -158,11 +158,11 @@ export async function renderRerollLog(){
 
   const list = await fetchRerollLog(eid, 50);
 
-  let html = '<table><thead><tr><th>時間</th><th>獎項</th><th>原得主</th><th>改為</th></tr></thead><tbody>';
+  let html = '<table><thead><tr><th>?��?</th><th>?��?</th><th>?��?�?/th><th>?�為</th></tr></thead><tbody>';
   for(const row of (list||[])){
     const t = row.time ? new Date(row.time).toLocaleString() : '';
-    const ori = row.replaced ? `${row.replaced.name||''}（${row.replaced.dept||''}）` : '';
-    const rep = row.replacement ? `${row.replacement.name||''}（${row.replacement.dept||''}）` : '<span style="opacity:.6">—</span>';
+    const ori = row.replaced ? `${row.replaced.name||''}�?{row.replaced.dept||''}）` : '';
+    const rep = row.replacement ? `${row.replacement.name||''}�?{row.replacement.dept||''}）` : '<span style="opacity:.6">??/span>';
     html += `<tr><td>${t}</td><td>${row.prizeName||row.prizeId||''}</td><td>${ori}</td><td>${rep}</td></tr>`;
   }
   html += '</tbody></table>';
@@ -170,7 +170,7 @@ export async function renderRerollLog(){
 }
 
 /* ============================================================
-   Grid click delegation — reroll only the clicked slot
+   Grid click delegation ??reroll only the clicked slot
    Call once after the CMS page mounts
 ============================================================ */
 let _gridBoundMode = null;
@@ -199,7 +199,7 @@ export function bindStageGridDelegation(mode='cms'){
 }
 
 /* ============================================================
-   Draw batch (1–10). Saves to DB via coreDrawBatch.
+   Draw batch (1??0). Saves to DB via coreDrawBatch.
 ============================================================ */
 export async function performDraw(batchSize, hooks){
   const { overlayEl, gridEl, afterRender, skipCountdown } = hooks || {};
@@ -227,7 +227,7 @@ export async function performDraw(batchSize, hooks){
       renderBatchGrid(gridEl, drawState.lastBatch, 'cms');
     }
 
-    // confetti from the winners’ cards
+    // confetti from the winners??cards
     const cards = gridEl?.querySelectorAll('.winner-card');
     if(cards && cards.length) fireConfettiAtCards(cards);
   } finally {
@@ -238,14 +238,14 @@ export async function performDraw(batchSize, hooks){
 /* ============================================================
    Reroll a single slot (only that person):
    - remove winner at slotIndex from prize.winners
-   - clear that person’s people[].prize if it matched
+   - clear that person?�s people[].prize if it matched
    - draw exactly ONE replacement (coreDrawBatch(1))
    - log to /rerollLog
    - replace ONLY that card in the grid/UI
 ============================================================ */
 export async function rerollOne(slotIndex, hooks){
   const eid = getCurrentEventId();
-  if (!eid) throw new Error('尚未選擇活動');
+  if (!eid) throw new Error('尚未?��?活�?');
 
   const prizes = await getPrizes(eid);
   const curId = await getCurrentPrizeIdRemote(eid);
@@ -341,10 +341,10 @@ export async function clearScreenResults(gridEl){
 // --- Undo the most recent draw batch (remove winners + clear their prize) ---
 export async function undoLastDraw(){
   const batch = Array.isArray(drawState.lastBatch) ? drawState.lastBatch : [];
-  if (!batch.length) throw new Error('目前沒有可以復原的抽獎');
+  if (!batch.length) throw new Error('?��?沒�??�以復�??�抽??);
 
   const eid = getCurrentEventId();
-  if (!eid) throw new Error('尚未選擇活動');
+  if (!eid) throw new Error('尚未?��?活�?');
 
   const [people, prizes, curId] = await Promise.all([
     getPeople(eid),
@@ -352,7 +352,7 @@ export async function undoLastDraw(){
     getCurrentPrizeIdRemote(eid)
   ]);
   const cur = (prizes || []).find(p => p && p.id === curId);
-  if (!cur) throw new Error('尚未選擇抽獎項目');
+  if (!cur) throw new Error('尚未?��??��??�目');
 
   const keys = new Set(batch.map(w => winnerKey(w)));
 

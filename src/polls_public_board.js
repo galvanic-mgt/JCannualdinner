@@ -1,6 +1,6 @@
-import { FB } from './fb.js';
-import { getAssets } from './core_firebase.js';
-import { applyBackground } from './ui_background.js';
+import { FB } from './fb.js?v=20260521-jcdb';
+import { getAssets } from './core_firebase.js?v=20260521-jcdb';
+import { applyBackground } from './ui_background.js?v=20260521-jcdb';
 
 const url = new URL(location.href);
 const eid = url.searchParams.get('event');
@@ -37,11 +37,11 @@ async function resolvePollId(eid){
 
 
 function renderBars(poll){
-  $('#pollQ').textContent = poll.question || '投票';
+  $('#pollQ').textContent = poll.question || '?�票';
   const votes = poll.votes || {};
   const opts  = poll.options || [];
   const total = Object.values(votes).reduce((a,b)=> a + Number(b || 0), 0);
-  $('#total').textContent = `共 ${total} 票`;
+  $('#total').textContent = `??${total} 票`;
 
   const bars = $('#bars'); bars.innerHTML = '';
   const max = Math.max(1, ...Object.values(votes).map(Number));
@@ -116,17 +116,17 @@ async function playResultsAnimation(poll){
 
   wrap.classList.remove('hidden');
   chart.innerHTML = '';
-  status.textContent = '播放結果動畫中…';
+  status.textContent = '?�放結�??�畫中�?;
 
   // build bars
   opts.forEach((o, idx) => {
     const bar = document.createElement('div');
     bar.className = 'rBar';
     bar.innerHTML = `
-      <div class="crown">👑</div>
+      <div class="crown">??</div>
       <div class="rFillWrap"><div class="rFill" data-count="${o.count}"></div></div>
       <div class="rLabel">${o.text}</div>
-      <div class="rCount">0 票</div>
+      <div class="rCount">0 �?/div>
     `;
     chart.appendChild(bar);
   });
@@ -151,7 +151,7 @@ async function playResultsAnimation(poll){
     await new Promise(r => setTimeout(r, 900));
   }
 
-  status.textContent = '動畫完畢。再次點擊可重播。';
+  status.textContent = '?�畫完畢?��?次�??�可?�播??;
 }
 
 async function getCurrentPollId(){
