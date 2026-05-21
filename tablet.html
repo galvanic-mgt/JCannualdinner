@@ -1,9 +1,9 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="zh-HK">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Tablet ?賜?</title>
+  <title>Tablet 抽獎</title>
   <link rel="stylesheet" href="./styles.css">
   <!-- Copy public view styling so frame/multiply/percent heights match -->
   <style>
@@ -87,11 +87,12 @@
     <main class="container">
       <div class="bar" style="gap:12px;flex-wrap:wrap;justify-content:center;align-items:center;margin-bottom:16px">
         <label class="bar" style="gap:6px;align-items:center">
-          ?賜??
+          抽獎項目
           <select id="tabletPrizeSelect" class="input" style="min-width:200px"></select>
         </label>
         <div id="drawBtns" class="btns">
-          ?寞活嚗?          <button class="btn small" data-batch="1">1</button>
+          批次：
+          <button class="btn small" data-batch="1">1</button>
           <button class="btn small" data-batch="2">2</button>
           <button class="btn small" data-batch="3">3</button>
           <button class="btn small" data-batch="4">4</button>
@@ -102,9 +103,9 @@
           <button class="btn small" data-batch="9">9</button>
           <button class="btn small" data-batch="10">10</button>
         </div>
-        <button id="btnRollMain" class="btn" style="background:#e53935;color:#fff">???賜?</button>
-        <button id="btnRollInstant" class="btn" style="background:#8bc34a;color:#000">?單??賜?</button>
-        <button id="btnClearScreen" class="btn" style="background:#ffd84d;color:#000">皜征?恍</button>
+        <button id="btnRollMain" class="btn" style="background:#e53935;color:#fff">開始抽獎</button>
+        <button id="btnRollInstant" class="btn" style="background:#8bc34a;color:#000">即時抽獎</button>
+        <button id="btnClearScreen" class="btn" style="background:#ffd84d;color:#000">清空畫面</button>
       </div>
 
       <!-- Stage area (same elements as public board) -->
@@ -118,11 +119,11 @@
           <div class="spacer"></div>
           <div class="bar">
             <div id="stageCurrentPrize" class="stat current-prize">
-              <span class="prize-label">?暹迤?賜?嚗?/span>
-              <span class="prize-name" id="stagePrizeName">??/span>
+              <span class="prize-label">現正抽獎：</span>
+              <span class="prize-name" id="stagePrizeName">—</span>
             </div>
             <div id="prizeLeftInline" class="stat">
-              甇斤?撠?嚗?span id="stagePrizeLeft">??/span>
+              此獎尚餘：<span id="stagePrizeLeft">—</span>
             </div>
           </div>
           <div class="spacer"></div>
@@ -134,8 +135,8 @@
         </div>
 
         <div class="stage-row footer-stats">
-          <div id="totalLeft" class="stat">?箏葉銝行敺?撠?嚗?span id="stageTotalLeft">??/span></div>
-          <div id="totalWon" class="stat">撌脣???<span id="stageTotalWon">??/span></div>
+          <div id="totalLeft" class="stat">出席並未得獎尚餘：<span id="stageTotalLeft">—</span></div>
+          <div id="totalWon" class="stat">已得獎：<span id="stageTotalWon">—</span></div>
         </div>
       </div>
      
@@ -175,7 +176,7 @@
       (prizes || []).forEach(p=>{
         const opt = document.createElement('option');
         opt.value = p.id;
-        opt.textContent = p.no ? `${p.no} ??${p.name||''}` : (p.name||'');
+        opt.textContent = p.no ? `${p.no} — ${p.name||''}` : (p.name||'');
         if (p.id === curId) opt.selected = true;
         sel.appendChild(opt);
       });

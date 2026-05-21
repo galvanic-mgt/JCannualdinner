@@ -1,4 +1,4 @@
-﻿import { getCurrentEventId } from './core_firebase.js';
+import { getCurrentEventId } from './core_firebase.js';
 import {
   getRewardRounds,
   getRewardRoundState,

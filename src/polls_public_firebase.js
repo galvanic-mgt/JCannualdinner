@@ -1,4 +1,4 @@
-﻿// src/polls_public_firebase.js
+// src/polls_public_firebase.js
 import { FB } from './fb.js';
 import { getCurrentEventId } from './core_firebase.js';
 

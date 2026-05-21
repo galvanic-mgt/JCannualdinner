@@ -1,4 +1,4 @@
-﻿// Shared helper to apply a full-page background layer (dimmed) from assets.
+// Shared helper to apply a full-page background layer (dimmed) from assets.
 import { getAssets } from './core_firebase.js';
 
 /**

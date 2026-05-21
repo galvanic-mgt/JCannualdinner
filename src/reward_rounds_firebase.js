@@ -1,4 +1,4 @@
-﻿import { FB } from './fb.js';
+import { FB } from './fb.js';
 import { getCurrentEventId, getPeople, setPeople } from './core_firebase.js';
 
 function makeId(prefix = 'r') {

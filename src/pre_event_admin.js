@@ -1,22 +1,22 @@
-﻿const PRE_EVENT_ADMIN_CONFIG = window.PRE_EVENT_APPLY_CONFIG || {};
+const PRE_EVENT_ADMIN_CONFIG = window.PRE_EVENT_APPLY_CONFIG || {};
 const ADMIN_FIREBASE_BASE = PRE_EVENT_ADMIN_CONFIG.firebaseBase || "https://jc-annualdinner-default-rtdb.asia-southeast1.firebasedatabase.app";
 
 let currentRows = [];
 let currentPeople = [];
 
 const TEXT = {
-  enterEventId: "隢?頛詨瘣餃? ID?nEnter an event ID first.",
-  loading: "甇?頛...\nLoading...",
-  loaded: count => `撌脰???${count} 隞賜閮n${count} applications loaded.`,
-  settingsSaved: "閮剖?撌脣摮nSettings saved.",
-  loadBeforeExport: "隢?頛?餉?鞈???箝nLoad applications before exporting.",
-  csvExported: "CSV 撌脣?箝nCSV exported.",
-  chooseBackfill: "隢??豢?摰?鞈? CSV?nChoose an arrangement CSV first.",
-  couldNotLoad: "?芾頛?餉?鞈??nCould not load applications.",
-  couldNotImport: "?芾?臬摰?鞈? CSV?nCould not import arrangement CSV.",
-  couldNotSaveSettings: "?芾?脣?閮剖??nCould not save settings.",
-  noApplications: "?芾??乩遙雿閮??nNo applications loaded.",
-  imported: count => `撌脣??${count} 銵??n${count} rows imported.`
+  enterEventId: "請先輸入活動 ID。\nEnter an event ID first.",
+  loading: "正在載入...\nLoading...",
+  loaded: count => `已載入 ${count} 份登記。\n${count} applications loaded.`,
+  settingsSaved: "設定已儲存。\nSettings saved.",
+  loadBeforeExport: "請先載入登記資料再匯出。\nLoad applications before exporting.",
+  csvExported: "CSV 已匯出。\nCSV exported.",
+  chooseBackfill: "請先選擇安排資料 CSV。\nChoose an arrangement CSV first.",
+  couldNotLoad: "未能載入登記資料。\nCould not load applications.",
+  couldNotImport: "未能匯入安排資料 CSV。\nCould not import arrangement CSV.",
+  couldNotSaveSettings: "未能儲存設定。\nCould not save settings.",
+  noApplications: "未載入任何登記資料。\nNo applications loaded.",
+  imported: count => `已匯入 ${count} 行資料。\n${count} rows imported.`
 };
 
 function $(id) {
@@ -126,26 +126,26 @@ function normaliseFallbackApplications(raw) {
 
 function columns() {
   return [
-    ["甇???nBatch number", "code"],
-    ["憪?\nName", "name"],
-    ["?券?\nDepartment", "dept"],
-    ["?餉店\nPhone", "phone"],
-    ["?箏葉\nAttending", "attending"],
-    ["鈭日撘nTransport", "transportLabel"],
-    ["?餌???\nGo time", "goTime"],
-    ["銝??圈?\nPickup location", "pickupLocationLabel"],
-    ["????\nReturn time", "returnTime"],
-    ["???圈?\nReturn location", "returnLocationLabel"],
-    ["擗ㄡ\nMeal", "mealLabel"],
-    ["?酉\nRemarks", "remarks"],
-    ["?啗?\nTable", "finalArrangement.table"],
-    ["摨找?\nSeat", "finalArrangement.seat"],
-    ["?蝯?頠??nPickup time", "finalArrangement.pickupTime"],
-    ["?蝯?頠暺nFinal pickup location", "finalArrangement.pickupLocation"],
-    ["?蝯?蝔??nFinal return time", "finalArrangement.returnTime"],
-    ["?蝯?憌淚nFinal meal", "finalArrangement.mealLabel"],
-    ["?蝯?閮蓋nFinal remarks", "finalArrangement.remarks"],
-    ["?湔??\nUpdated at", "updatedAt"]
+    ["正片號\nBatch number", "code"],
+    ["姓名\nName", "name"],
+    ["部門\nDepartment", "dept"],
+    ["電話\nPhone", "phone"],
+    ["出席\nAttending", "attending"],
+    ["交通方式\nTransport", "transportLabel"],
+    ["去程時間\nGo time", "goTime"],
+    ["上車地點\nPickup location", "pickupLocationLabel"],
+    ["回程時間\nReturn time", "returnTime"],
+    ["回程地點\nReturn location", "returnLocationLabel"],
+    ["餐飲\nMeal", "mealLabel"],
+    ["備註\nRemarks", "remarks"],
+    ["台號\nTable", "finalArrangement.table"],
+    ["座位\nSeat", "finalArrangement.seat"],
+    ["最終上車時間\nPickup time", "finalArrangement.pickupTime"],
+    ["最終上車地點\nFinal pickup location", "finalArrangement.pickupLocation"],
+    ["最終回程時間\nFinal return time", "finalArrangement.returnTime"],
+    ["最終餐飲\nFinal meal", "finalArrangement.mealLabel"],
+    ["最終備註\nFinal remarks", "finalArrangement.remarks"],
+    ["更新時間\nUpdated at", "updatedAt"]
   ];
 }
 
@@ -156,9 +156,9 @@ function getPathValue(row, path) {
 function displayValue(row, key) {
   if (key === "attending") {
     return row.attending === false || row.attending === "no"
-      ? "銝撣?Not attending"
+      ? "不出席 Not attending"
       : row.attending === true || row.attending === "yes"
-        ? "?箏葉 Attend"
+        ? "出席 Attend"
         : "";
   }
   if (key === "pickupLocationLabel") {
@@ -271,22 +271,22 @@ function headerMap(headers) {
     return -1;
   };
   return {
-    code: find(["BatchNumber", "Code", "Batch", "代碼"]),
-    table: find(["Table", "TableNo", "枱號"]),
+    code: find(["BatchNumber", "Code", "Batch", "正片號"]),
+    table: find(["Table", "TableNo", "台號"]),
     seat: find(["Seat", "SeatNo", "座位"]),
-    pickupTime: find(["PickupTime", "GoTime", "去程時間"]),
-    pickupLocation: find(["FinalPickupLocation", "PickupLocation", "去程地點"]),
+    pickupTime: find(["PickupTime", "GoTime", "上車時間"]),
+    pickupLocation: find(["FinalPickupLocation", "PickupLocation", "上車地點"]),
     returnTime: find(["FinalReturnTime", "ReturnTime", "回程時間"]),
-    mealLabel: find(["FinalMeal", "Meal", "膳食"]),
+    mealLabel: find(["FinalMeal", "Meal", "餐飲"]),
     remarks: find(["FinalRemarks", "Remarks", "備註"])
   };
 }
 
 async function importBackfillText(text) {
   const eventId = $("eventIdInput").value.trim();
-  if (!eventId) throw new Error("蝻箏?瘣餃? ID??Missing event ID.");
+  if (!eventId) throw new Error("缺少活動 ID。 Missing event ID.");
   const lines = String(text).split(/\r?\n/).filter(line => line.trim());
-  if (lines.length < 2) throw new Error("CSV 瘝?鞈???CSV is empty.");
+  if (lines.length < 2) throw new Error("CSV 沒有資料。 CSV is empty.");
 
   if (!currentPeople.length) {
     currentPeople = await dbGet(`/events/${eventId}/people`).catch(() => []);
@@ -295,7 +295,7 @@ async function importBackfillText(text) {
 
   const headers = splitCSVLine(lines[0]);
   const idx = headerMap(headers);
-  if (idx.code < 0) throw new Error("摰?鞈? CSV ?閬迤????Code 甈???Arrangement CSV needs a BatchNumber or Code column.");
+  if (idx.code < 0) throw new Error("安排資料 CSV 需要正片號或 Code 欄位。 Arrangement CSV needs a BatchNumber or Code column.");
 
   const patch = {};
   let count = 0;

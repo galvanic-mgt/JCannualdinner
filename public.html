@@ -1,11 +1,11 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="zh-HK">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>?祉?恍 繚 ??賜?</title>
+  <title>公眾畫面 · 舞台抽獎</title>
 
-  <!-- ??Use the same stylesheet as CMS -->
+  <!-- ✅ Use the same stylesheet as CMS -->
   <link rel="stylesheet" href="./styles.css">
 
 <style>
@@ -53,7 +53,7 @@
   /* Ensure rows expand to full width under any inherited rules */
   .is-public .stage-row { width: 100%; margin: 0; }
 
-/* Make ?暹迤?賜? bigger on public board */
+/* Make 現正抽獎 bigger on public board */
 .is-public .current-prize{
   font-size: clamp(24px, 3vw, 100px);
   white-space: normal;
@@ -62,14 +62,14 @@
   
 }
 
-/* Optionally also bump the 甇斤?撠? pill a bit */
+/* Optionally also bump the 此獎尚餘 pill a bit */
 .is-public #prizeLeftInline.stat{
   font-size: clamp(18px, 1vw, 32px);
   padding: 10px 16px;
   white-space: normal;
   word-break: break-word;
 }
-/* PUBLIC VIEW: compress the ?暹迤?賜? row */
+/* PUBLIC VIEW: compress the 現正抽獎 row */
 .is-public .prize-strip {
     flex: 0 0 auto !important;       /* do NOT stretch vertically */
     height: auto;
@@ -79,7 +79,7 @@
 
 /* reduce vertical padding inside the bar */
 .is-public .prize-strip .bar {
-    padding: 4px 24px !important;    /* was like 12px??0px */
+    padding: 4px 24px !important;    /* was like 12px–20px */
     height: auto;
 }
 
@@ -88,7 +88,7 @@
     flex: 0 0 auto !important; 
     height: 0 !important;            /* stops them from pushing content down */
 }
-/* PUBLIC VIEW ??Logo */
+/* PUBLIC VIEW — Logo */
 .is-public #stageLogo {
     width: clamp(220px, 20vw, 340px);
     height: 100%;
@@ -104,7 +104,7 @@
     position: relative;
 }
 
-/* PUBLIC VIEW ??Banner */
+/* PUBLIC VIEW — Banner */
 .is-public #stageBanner {
     height: 100%;
     max-height: none;
@@ -113,7 +113,7 @@
     background-repeat: no-repeat;
     background-position: center;
     border-radius: 0px;
-    background-size: contain;   /* 漎? key line */
+    background-size: contain;   /* ⬅️ key line */
     display: grid;
     place-items: center;
     justify-self: stretch;
@@ -166,7 +166,7 @@
 }
 
 .is-public .winners-area.stage-main {
-  flex: 1 1 auto;          /* 漎? grow to fill leftover space */
+  flex: 1 1 auto;          /* ⬅️ grow to fill leftover space */
   display: flex;
   flex-direction: column;
   min-height: 0;           /* important for flex children to be able to shrink */
@@ -188,7 +188,7 @@
   flex: 0 0 auto;
 }
 
-/* PUBLIC: center winner cards and text for 1??0 draws */
+/* PUBLIC: center winner cards and text for 1–10 draws */
 .is-public #stageGrid .winner-card {
   width: 100%;
   height: auto;
@@ -368,11 +368,11 @@
         <div class="spacer"></div>
         <div class="bar">
           <div id="stageCurrentPrize" class="stat current-prize">
-            <span class="prize-label">?暹迤?賜?嚗?/span>
-            <span class="prize-name" id="stagePrizeName">??/span>
+            <span class="prize-label">現正抽獎：</span>
+            <span class="prize-name" id="stagePrizeName">—</span>
           </div>
           <div id="prizeLeftInline" class="stat">
-            甇斤?撠?嚗?span id="stagePrizeLeft">??/span>
+            此獎尚餘：<span id="stagePrizeLeft">—</span>
           </div>
         </div>
         <div class="spacer"></div>
@@ -392,7 +392,7 @@
   <script type="module" src="./src/stage_prizes_firebase.js"></script>
   <script src="./qrcode.min.js"></script>
 
-  <!-- ??Then our boot script that calls renderStageDraw() -->
+  <!-- ✅ Then our boot script that calls renderStageDraw() -->
   <script type="module" src="./src/public_stage_boot.js"></script>
   <script type="module" src="./src/public_stage_state.js"></script>
 

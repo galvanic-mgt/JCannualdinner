@@ -1,4 +1,4 @@
-﻿// src/boot.js
+// src/boot.js
 function showErrorOverlay(title, error){
   let el = document.getElementById('js-error-overlay');
   if(!el){
