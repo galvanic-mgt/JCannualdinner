@@ -141,6 +141,72 @@ function ensureLandingQR(eid) {
   });
 }
 
+function ensurePreEventApplyQR(eid) {
+  if (!eid) return;
+
+  const link = preEventApplyLink(eid);
+
+  let card = document.getElementById('preEventApplyQRCard');
+  if (!card) {
+    const page = document.getElementById('pageEvent');
+    if (!page) return;
+
+    card = document.createElement('div');
+    card.id = 'preEventApplyQRCard';
+    card.className = 'card';
+    card.style.marginTop = '16px';
+    card.innerHTML = `
+      <div class="bar" style="justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap">
+        <div>
+          <strong>預先登記 / Pre-event Application</strong>
+          <p class="muted" style="margin-top:4px;font-size:13px">
+            這個連結和 QR 是給參加者在活動前填寫申請資料用的：
+            掃描後會開啟 <code>pre_event_apply.html?event=…</code>，並連接到目前這個活動。
+          </p>
+        </div>
+        <div id="preEventApplyQR" style="margin-top:8px"></div>
+      </div>
+    `;
+    page.appendChild(card);
+  }
+
+  const host = document.getElementById('preEventApplyQR');
+  if (!host) return;
+
+  host.innerHTML = `
+    <div class="grid-2" style="gap:16px;align-items:center">
+      <div id="preEventApplyQRCanvas"></div>
+      <div>
+        <div class="muted" style="word-break:break-all">${link}</div>
+        <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+          <button id="copyPreEventApplyLink" class="btn">複製預先登記連結</button>
+          <a class="btn" href="${link}" target="_blank" rel="noopener">開啟預先登記頁</a>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const canvasHost = document.getElementById('preEventApplyQRCanvas');
+  if (window.QRCode && canvasHost) {
+    // eslint-disable-next-line no-undef
+    new QRCode(canvasHost, {
+      text: link,
+      width: 256,
+      height: 256,
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  }
+
+  document.getElementById('copyPreEventApplyLink')?.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(link);
+      alert('已複製預先登記連結');
+    } catch (e) {
+      // ignore
+    }
+  });
+}
+
 // Landing button in header: open event-specific landing
 function bindLandingButton(){
   const btn = document.getElementById('btnLanding');
@@ -179,6 +245,12 @@ function landingPublicBoardLink(eid) {
   const u = new URL(location.href);
   // same folder as index.html, but go to landing.html
   u.pathname = (u.pathname.replace(/[^/]+$/, '') || '/') + 'landing.html';
+  u.search = `?event=${encodeURIComponent(eid)}`;
+  return u.href;
+}
+function preEventApplyLink(eid) {
+  const u = new URL(location.href);
+  u.pathname = (u.pathname.replace(/[^/]+$/, '') || '/') + 'pre_event_apply.html';
   u.search = `?event=${encodeURIComponent(eid)}`;
   return u.href;
 }
@@ -616,6 +688,7 @@ t('metaClient',meta.client);
 { const el=document.getElementById('metaListed');
   if(el) el.checked = meta.listed!==false; }
     ensureLandingQR(eid);
+    ensurePreEventApplyQR(eid);
 }
 
 function bindEventInfoSave(){
