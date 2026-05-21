@@ -1,12 +1,12 @@
-// src/stage_prizes_firebase.js ??prizes data ops + draw core
+﻿// src/stage_prizes_firebase.js ??prizes data ops + draw core
 
 import {
   getCurrentEventId,
   getPeople, setPeople,
   getPrizes, setPrizes,
   getCurrentPrizeIdRemote, setCurrentPrizeIdRemote,
-} from './core_firebase.js?v=20260521-jcdb';
-import { FB } from './fb.js?v=20260521-jcdb';
+} from './core_firebase.js';
+import { FB } from './fb.js';
 
 /* ----------------- helpers ----------------- */
 export function prizeLeftLocal(prize) {
@@ -28,7 +28,7 @@ function ensurePrizeShape(p) {
   return {
     id: p.id,
     no: p.no || '',
-    name: p.name || '?��???,
+    name: p.name || '?啁???,
     quota: Math.max(0, Number(p.quota || 0)),
     winners: Array.isArray(p.winners) ? p.winners : [],
   };
@@ -46,13 +46,13 @@ function winnerKey(p){
 // CREATE
 export async function addPrize(partial = {}) {
   const eid = getCurrentEventId();
-  if (!eid) throw new Error('尚未?��?活�?');
+  if (!eid) throw new Error('撠?豢?瘣餃?');
 
   const prizes = (await getPrizes(eid)) || [];
   const id = partial.id || ('p' + Math.random().toString(36).slice(2, 8));
 
   if (prizes.some(p => p?.id === id)) {
-    throw new Error('?��? ID ?��?�? + id);
+    throw new Error('?? ID ??嚗? + id);
   }
 
   const prize = ensurePrizeShape({ id, ...partial });
@@ -64,12 +64,12 @@ export async function addPrize(partial = {}) {
 // UPDATE (by id)
 export async function updatePrize(patch = {}) {
   const eid = getCurrentEventId();
-  if (!eid) throw new Error('尚未?��?活�?');
-  if (!patch.id) throw new Error('缺�??��? ID');
+  if (!eid) throw new Error('撠?豢?瘣餃?');
+  if (!patch.id) throw new Error('蝻箏??? ID');
 
   const prizes = (await getPrizes(eid)) || [];
   const idx = prizes.findIndex(p => p?.id === patch.id);
-  if (idx < 0) throw new Error('?��??��??��?' + patch.id);
+  if (idx < 0) throw new Error('?曆??啁???' + patch.id);
 
   const merged = ensurePrizeShape({ ...prizes[idx], ...patch });
   prizes[idx] = merged;
@@ -80,8 +80,8 @@ export async function updatePrize(patch = {}) {
 // DELETE (by id)
 export async function removePrize(prizeId) {
   const eid = getCurrentEventId();
-  if (!eid) throw new Error('尚未?��?活�?');
-  if (!prizeId) throw new Error('缺�??��? ID');
+  if (!eid) throw new Error('撠?豢?瘣餃?');
+  if (!prizeId) throw new Error('蝻箏??? ID');
 
   const [prizes, curId] = await Promise.all([
     getPrizes(eid),
@@ -100,7 +100,7 @@ export async function removePrize(prizeId) {
 // DELETE ALL (prizes + winners + people.prize reset)
 export async function clearAllPrizes() {
   const eid = getCurrentEventId();
-  if (!eid) throw new Error('尚未?��?活�?');
+  if (!eid) throw new Error('撠?豢?瘣餃?');
 
   // clear prizes + current selection
   await setPrizes(eid, []);
@@ -123,7 +123,7 @@ export async function clearAllPrizes() {
 // --- SELECT / SET CURRENT PRIZE (needed by ui_cms_firebase.js) ---
 export async function setCurrentPrize(prizeId) {
   const eid = getCurrentEventId();
-  if (!eid) throw new Error('尚未?��?活�?');
+  if (!eid) throw new Error('撠?豢?瘣餃?');
 
   // allow clearing selection by passing null/undefined/empty
   const pid = prizeId || null;
@@ -132,7 +132,7 @@ export async function setCurrentPrize(prizeId) {
   if (pid) {
     const prizes = (await getPrizes(eid)) || [];
     const exists = prizes.some(p => p && p.id === pid);
-    if (!exists) throw new Error(`?��??��??��?${pid}`);
+    if (!exists) throw new Error(`?曆??啁???${pid}`);
   }
 
   await setCurrentPrizeIdRemote(eid, pid);
@@ -179,16 +179,16 @@ function mapPrizeHeader(headers) {
     return -1;
   };
   return {
-    no:    find(['no','序�?','?�碼','編�?','number']),
-    id:    find(['id', '編�?']),
-    name:  find(['name', '?��?', '?��?', '?�稱', 'prize']),
-    quota: find(['quota', '?��?', '?��?'])
+    no:    find(['no','摨?','?Ⅳ','蝺刻?','number']),
+    id:    find(['id', '蝺刻?']),
+    name:  find(['name', '??', '??', '?迂', 'prize']),
+    quota: find(['quota', '??', '?賊?'])
   };
 }
 
 export async function importPrizesCSV(text) {
   const eid = getCurrentEventId();
-  if (!eid) throw new Error('尚未?��?活�?');
+  if (!eid) throw new Error('撠?豢?瘣餃?');
 
   const lines = String(text).split(/\r?\n/).filter(l => l.trim().length);
   if (!lines.length) return [];
@@ -242,7 +242,7 @@ export async function drawBatch(n = 1, opts = {}) {
     if (typeof window !== 'undefined') window.__skipCountdownFlag = false;
 
     const eid = getCurrentEventId?.();
-    if (!eid) throw new Error('尚未?��?活�?');
+    if (!eid) throw new Error('撠?豢?瘣餃?');
 
     const [people, prizes, curId] = await Promise.all([
       getPeople(eid),
@@ -250,14 +250,14 @@ export async function drawBatch(n = 1, opts = {}) {
       getCurrentPrizeIdRemote(eid),
     ]);
 
-    if (!Array.isArray(people)) throw new Error('人員?�單讀?�失??);
-    if (!Array.isArray(prizes)) throw new Error('?��?資�?讀?�失??);
+    if (!Array.isArray(people)) throw new Error('鈭箏?霈?仃??);
+    if (!Array.isArray(prizes)) throw new Error('??鞈?霈?仃??);
 
     const cur = prizes.find(p => p && p.id === curId);
-    if (!cur) throw new Error('尚未?��??��??�目');
+    if (!cur) throw new Error('撠?豢??賜??');
 
     const need = prizeLeftLocal(cur);
-    if (need <= 0) throw new Error('此�??��?額已�?);
+    if (need <= 0) throw new Error('甇斤???憿歇皛?);
 
     // no-repeat across ALL prizes (match by phone when available)
     const winnersSet = new Set(
@@ -272,7 +272,7 @@ export async function drawBatch(n = 1, opts = {}) {
       if (excludeKeys.has(key)) return false;
       return true;
     });
-    if (pool.length === 0) throw new Error('沒�??�抽?�單（�?檢查?�席?�?��?已�?得�?紀?��?');
+    if (pool.length === 0) throw new Error('瘝??舀?嚗?瑼Ｘ?箏葉???撌脫?敺?蝝??');
 
     const want = Math.max(1, Math.min(Number(n) || 1, 10, need, pool.length));
     const picks = pickUnique(pool, want);

@@ -1,128 +1,126 @@
-// events_admin.js ??活�?管�? subpage logic (with status + auto-refresh)
-import {
+﻿import {
   listEvents, createEvent, upsertEventMeta, deleteEvent,
   getEventInfo, saveEventInfo, setCurrentEventId
-} from './core_firebase.js?v=20260521-jcdb';
+} from './core_firebase.js';
 
 const $ = (sel) => document.querySelector(sel);
 
 function setStatus(msg, kind = 'info'){
   const s = $('#eaStatus');
-  if(!s) return;
+  if (!s) return;
   s.textContent = msg || '';
   s.style.opacity = '1';
-  s.style.color = (kind === 'error') ? '#ff5a67' : '';
+  s.style.color = kind === 'error' ? '#ff5a67' : '';
   clearTimeout(setStatus._t);
-  setStatus._t = setTimeout(()=>{ s.style.opacity = '0.7'; }, 1500);
+  setStatus._t = setTimeout(() => { s.style.opacity = '0.7'; }, 1500);
 }
 
 function rowTemplate(ev){
   const listed = ev.listed !== false;
   return `
-<tr data-id="${ev.id}">
+<tr data-id="${ev.id}" data-last-title="${ev.name || ''}">
   <td class="mono">${ev.id}</td>
-  <td><input class="name" value="${ev.name || ''}"/></td>
-  <td><input class="client" value="${ev.client || ''}"/></td>
-  <td style="text-align:center"><input type="checkbox" class="listed" ${listed ? 'checked' : ''}/></td>
+  <td><input class="name" value="${ev.name || ''}"></td>
+  <td><input class="client" value="${ev.client || ''}"></td>
+  <td style="text-align:center"><input type="checkbox" class="listed" ${listed ? 'checked' : ''}></td>
   <td class="actions">
-    <button class="btn small open">?��?</button>
-    <button class="btn small save">?��?</button>
-    <button class="btn small danger delete">?�除</button>
+    <button class="btn small open">開啟</button>
+    <button class="btn small save">儲存</button>
+    <button class="btn small danger delete">刪除</button>
   </td>
 </tr>`;
 }
 
 async function bindRowActions(tbody){
-  tbody.querySelectorAll('tr').forEach((tr)=>{
+  tbody.querySelectorAll('tr').forEach((tr) => {
     const id = tr.dataset.id;
 
-    tr.querySelector('.open')?.addEventListener('click', ()=>{
+    tr.querySelector('.open')?.addEventListener('click', () => {
       setCurrentEventId(id);
       $('#cmsNav .nav-item[data-target="pageEvent"]')?.click();
       window.scrollTo(0, 0);
     });
 
-    tr.querySelector('.save')?.addEventListener('click', async ()=>{
-      try{
-        const name   = tr.querySelector('.name').value.trim();
+    tr.querySelector('.save')?.addEventListener('click', async () => {
+      try {
+        const name = tr.querySelector('.name').value.trim();
         const client = tr.querySelector('.client').value.trim();
         const listed = tr.querySelector('.listed').checked;
-        await upsertEventMeta(id, { name: name || '?�活??, client, listed });
+        await upsertEventMeta(id, { name: name || '活動', client, listed });
 
-        // keep info.title in sync when blank/unchanged
         const info = (await getEventInfo(id)).info || {};
-        if(!info.title || info.title === '' || info.title === tr.dataset.lastTitle){
-          await saveEventInfo(id, { ...info, title: name || info.title || '?�活?? });
+        if (!info.title || info.title === '' || info.title === tr.dataset.lastTitle) {
+          await saveEventInfo(id, { ...info, title: name || info.title || '活動' });
         }
 
         tr.classList.add('saved');
-        setTimeout(()=> tr.classList.remove('saved'), 700);
-        setStatus('已儲�???);
-        window.refreshCMS?.();            // auto-refresh CMS (left list, etc.)
-      }catch(err){
-        setStatus('?��?失�?�? + (err?.message || err), 'error');
+        setTimeout(() => tr.classList.remove('saved'), 700);
+        setStatus('已儲存');
+        window.refreshCMS?.();
+      } catch (err) {
+        setStatus('儲存失敗：' + (err?.message || err), 'error');
       }
     });
 
-    tr.querySelector('.delete')?.addEventListener('click', async ()=>{
-      if(!confirm('確�??�除?�個活?��?此�?作無法�??��?)) return;
-      try{
+    tr.querySelector('.delete')?.addEventListener('click', async () => {
+      if (!confirm('確定刪除此活動？此操作不能復原。')) return;
+      try {
         await deleteEvent(id);
-        setStatus('已刪????);
-        await renderEventsAdmin();        // re-render admin table
-        window.refreshCMS?.();            // refresh sidebar & tabs
-      }catch(err){
-        setStatus('?�除失�?�? + (err?.message || err), 'error');
+        setStatus('已刪除');
+        await renderEventsAdmin();
+        window.refreshCMS?.();
+      } catch (err) {
+        setStatus('刪除失敗：' + (err?.message || err), 'error');
       }
     });
   });
 }
 
 export async function renderEventsAdmin(){
-  const container = $('#eventsAdmin'); if(!container) return;
+  const container = $('#eventsAdmin');
+  if (!container) return;
 
   container.innerHTML = `
 <div class="card" style="margin-bottom:12px">
-  <h4>?��?活�?</h4>
+  <h4>新增活動</h4>
   <div class="bar" style="gap:8px; align-items:center">
-    <input id="eaName" placeholder="活�??�稱"/>
-    <input id="eaClient" placeholder="客戶?�稱"/>
-    <label style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="eaListed" checked/> 顯示?�活?��???/label>
-    <button id="eaCreate" class="btn primary">+ 建�?</button>
+    <input id="eaName" placeholder="活動名稱">
+    <input id="eaClient" placeholder="客戶名稱">
+    <label style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="eaListed" checked> 顯示於活動清單</label>
+    <button id="eaCreate" class="btn primary">+ 建立</button>
     <span id="eaStatus" class="muted" style="font-size:12px;opacity:.7"></span>
   </div>
 </div>
 
 <div class="card">
-  <h4>?�部活�?</h4>
+  <h4>現有活動</h4>
   <table class="fullwidth">
-    <thead><tr><th>ID</th><th>?�稱</th><th>客戶</th><th>?�出</th><th>?��?</th></tr></thead>
+    <thead><tr><th>ID</th><th>名稱</th><th>客戶</th><th>顯示</th><th>操作</th></tr></thead>
     <tbody id="eaRows"></tbody>
   </table>
 </div>`;
 
-  // create
   const btn = $('#eaCreate');
-  btn?.addEventListener('click', async ()=>{
-    const name   = $('#eaName').value.trim();
+  btn?.addEventListener('click', async () => {
+    const name = $('#eaName').value.trim();
     const client = $('#eaClient').value.trim();
     const listed = $('#eaListed').checked;
     btn.disabled = true;
     const orig = btn.textContent;
-    btn.textContent = '建�?活�?中�?;
-    setStatus('建�?活�?中�?);
+    btn.textContent = '建立中...';
+    setStatus('建立活動中...');
 
-    try{
+    try {
       const id = await createEvent(name, client);
-      if(listed === false){
+      if (listed === false) {
         await upsertEventMeta(id, { listed: false });
       }
-      setStatus('已建�???);
-      await renderEventsAdmin();    // refresh admin table
-      window.refreshCMS?.();        // refresh sidebar & tabs
-    }catch(err){
-      setStatus('建�?失�?�? + (err?.message || err), 'error');
-    }finally{
+      setStatus('已建立');
+      await renderEventsAdmin();
+      window.refreshCMS?.();
+    } catch (err) {
+      setStatus('建立失敗：' + (err?.message || err), 'error');
+    } finally {
       btn.disabled = false;
       btn.textContent = orig;
       $('#eaName').value = '';
@@ -131,15 +129,13 @@ export async function renderEventsAdmin(){
     }
   });
 
-  // load rows
   const events = await listEvents();
-  const tbody  = $('#eaRows');
+  const tbody = $('#eaRows');
   tbody.innerHTML = events.map(rowTemplate).join('');
   await bindRowActions(tbody);
 }
 
 export function bootEventsAdmin(){
-  $('#cmsNav .nav-item[data-target="pageEventsManage"]')
-    ?.addEventListener('click', renderEventsAdmin);
+  $('#cmsNav .nav-item[data-target="pageEventsManage"]')?.addEventListener('click', renderEventsAdmin);
   renderEventsAdmin();
 }

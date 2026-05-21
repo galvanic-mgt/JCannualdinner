@@ -1,4 +1,4 @@
-// src/boot.js
+﻿// src/boot.js
 function showErrorOverlay(title, error){
   let el = document.getElementById('js-error-overlay');
   if(!el){
@@ -52,11 +52,11 @@ if (!window.__GLOBAL_NETS_BOUND__) {
 
 export async function startApp(){
   // 1) Admin overlay (non-critical)
-  const overlay = await safeImport('./admin_overlay.js?v=20260521-jcdb', 'admin_overlay.js');
+  const overlay = await safeImport('./admin_overlay.js', 'admin_overlay.js');
   overlay.bindLoginOverlay?.();
 
   // 2) CMS core
-  const cms = await safeImport('./ui_cms_firebase.js?v=20260521-jcdb', 'ui_cms_firebase.js');
+  const cms = await safeImport('./ui_cms_firebase.js', 'ui_cms_firebase.js');
   if (typeof cms.bootCMS === 'function') {
     try { await cms.bootCMS(); }
     catch (err) { showErrorOverlay('bootCMS()', err); }
@@ -65,11 +65,11 @@ export async function startApp(){
   }
 
   // 3) Public/tablet (no-ops if elements absent)
-  const surfaces = await safeImport('./surfaces_public_tablet.js?v=20260521-jcdb', 'surfaces_public_tablet.js');
+  const surfaces = await safeImport('./surfaces_public_tablet.js', 'surfaces_public_tablet.js');
   try { surfaces.renderPublicBoard?.(); } catch(e){ showErrorOverlay('renderPublicBoard()', e); }
   try { surfaces.renderTabletView?.(); } catch(e){ showErrorOverlay('renderTabletView()', e); }
 
   // 4) Optional admin page LAST (avoid cycles)
-  const ea = await safeImport('./events_admin.js?v=20260521-jcdb', 'events_admin.js');
+  const ea = await safeImport('./events_admin.js', 'events_admin.js');
   ea.bootEventsAdmin?.();
 }

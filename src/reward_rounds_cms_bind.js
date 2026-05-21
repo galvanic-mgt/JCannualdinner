@@ -1,4 +1,4 @@
-import { getCurrentEventId } from './core_firebase.js?v=20260521-jcdb';
+﻿import { getCurrentEventId } from './core_firebase.js';
 import {
   getRewardRounds,
   getRewardRoundState,
@@ -8,7 +8,7 @@ import {
   setCurrentRewardSelection,
   drawRewardRoundPrize,
   updateRewardRound
-} from './reward_rounds_firebase.js?v=20260521-jcdb';
+} from './reward_rounds_firebase.js';
 
 function $(id) {
   return document.getElementById(id);

@@ -1,8 +1,8 @@
-// src/public_stage_boot.js
-import { setCurrentEventId } from './core_firebase.js?v=20260521-jcdb';
-import { FB } from './fb.js?v=20260521-jcdb';
-import { renderStageDraw } from './stage_draw_ui.js?v=20260521-jcdb';
-import { applyBackground } from './ui_background.js?v=20260521-jcdb';
+ï»¿// src/public_stage_boot.js
+import { setCurrentEventId } from './core_firebase.js';
+import { FB } from './fb.js';
+import { renderStageDraw } from './stage_draw_ui.js';
+import { applyBackground } from './ui_background.js';
 
 function getEventId() {
   const u = new URL(location.href);
@@ -71,7 +71,7 @@ async function refreshAssets(eid) {
 }
 
 /**
- * Keep ?¾æ­£?½ç?ï¼?and æ­¤ç?å°šé?ï¼?in sync on the public board
+ * Keep ?æš¹è¿¤?è³œ?åš—?and ç”‡æ–¤?æ’ î«´?åš—?in sync on the public board
  */
 async function refreshCurrentPrize(eid) {
   if (!eid) return;

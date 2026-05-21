@@ -1,5 +1,5 @@
-import { FB } from './fb.js?v=20260521-jcdb';
-import { getCurrentEventId, getPeople, setPeople } from './core_firebase.js?v=20260521-jcdb';
+﻿import { FB } from './fb.js';
+import { getCurrentEventId, getPeople, setPeople } from './core_firebase.js';
 
 function makeId(prefix = 'r') {
   return prefix + Math.random().toString(36).slice(2, 8);

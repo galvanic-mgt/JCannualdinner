@@ -1,5 +1,5 @@
-import { getCurrentEventId, getPeople, setPeople, getEventInfo, getPrizes } from './core_firebase.js?v=20260521-jcdb';
-import { FB } from './fb.js?v=20260521-jcdb';
+﻿import { getCurrentEventId, getPeople, setPeople, getEventInfo, getPrizes } from './core_firebase.js';
+import { FB } from './fb.js';
 
 export function normalizeName(s){ return (s || '').trim().replace(/\s+/g,' '); }
 
@@ -38,13 +38,13 @@ function mapHeaderIndex(headers, info){
   const labelDept  = (info?.labelDept  || 'department').toLowerCase();
 
   return {
-    code:     hp(['code','票�?','�?��']),
-    phone:    hp(['phone','mobile','tel','?�話', labelPhone]),
-    name:     hp(['name','姓�?']),
-    dept:     hp(['department','dept','?�述','說�?','?��?','description', labelDept]),
-    table:    hp(['table','??,'�?,'桌�?','?��?']),
-    seat:     hp(['seat','座�?','座�?']),
-    present:  hp(['present','checkedin','checkin','?�席','?�場','?�席?�否','??,'?�場'])
+    code:     hp(['code','蟡刻?','隞?Ⅳ']),
+    phone:    hp(['phone','mobile','tel','?餉店', labelPhone]),
+    name:     hp(['name','憪?']),
+    dept:     hp(['department','dept','?膩','隤芣?','?券?','description', labelDept]),
+    table:    hp(['table','??,'獢?,'獢?','?梯?']),
+    seat:     hp(['seat','摨找?','摨扯?']),
+    present:  hp(['present','checkedin','checkin','?箏葉','?啣','?箏葉?','??,'?典'])
   };
 }
 

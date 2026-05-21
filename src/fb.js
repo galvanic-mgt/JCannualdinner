@@ -1,4 +1,4 @@
-import { CONFIG } from './config.js?v=20260521-jcdb';
+﻿import { CONFIG } from './config.js';
 
 // Build correct URL even for root-level PATCH ("/")
 const U = (p) => {

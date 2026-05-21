@@ -1,7 +1,7 @@
-// stage_draw_ui.js (top)
+﻿// stage_draw_ui.js (top)
 import {
   getCurrentEventId, getEventInfo, getPrizes, getCurrentPrizeIdRemote, getPeople, getAssets
-} from './core_firebase.js?v=20260521-jcdb';
+} from './core_firebase.js';
 
 import {
   performDraw, rerollOne, clearScreenResults, exportCurrentWinners, drawState, undoLastDraw,
@@ -10,9 +10,9 @@ import {
   fitWinnerCardText,
   countdown321,
   fireConfettiAtCards
-} from './stage_draw_logic.js?v=20260521-jcdb';
-import { bindStageGridDelegation } from './stage_draw_logic.js?v=20260521-jcdb';
-import { FB } from './fb.js?v=20260521-jcdb';
+} from './stage_draw_logic.js';
+import { bindStageGridDelegation } from './stage_draw_logic.js';
+import { FB } from './fb.js';
 import {
   getRewardRounds,
   getRewardRoundState,
@@ -21,7 +21,7 @@ import {
   addRewardRoundPrize,
   setCurrentRewardSelection,
   drawRewardRoundPrize
-} from './reward_rounds_firebase.js?v=20260521-jcdb';
+} from './reward_rounds_firebase.js';
 
 // remove: cellHTML(), renderBatchGrid(), renderRerollLog()
 
@@ -186,7 +186,7 @@ function bindStageRewardControls(){
 // Grid cell HTML for a winner
 function cellHTML(w, idx, mode){
   const name = w?.name||'', dept = w?.dept||'';
-  const rerollBtn = (mode==='cms' || mode==='tablet') ? `<button class="btn small reroll" data-idx="${idx}">?�抽</button>` : '';
+  const rerollBtn = (mode==='cms' || mode==='tablet') ? `<button class="btn small reroll" data-idx="${idx}">?</button>` : '';
   return `
   <div class="winner-card" data-idx="${idx}">
     <div class="name">${name}</div>
@@ -220,11 +220,11 @@ async function renderRerollLog(){
   const data = await FB.get(`/events/${eid}/rerollLog`);
   const list = Array.isArray(data) ? data : [];
   list.sort((a,b)=>(b.time||0)-(a.time||0));
-  let html = '<table><thead><tr><th>?��?</th><th>?��?</th><th>?��?�?/th><th>?�為</th></tr></thead><tbody>';
+  let html = '<table><thead><tr><th>??</th><th>??</th><th>??銝?/th><th>?寧</th></tr></thead><tbody>';
   for (const row of list) {
     const t = row.time ? new Date(row.time).toLocaleString() : '';
-    const ori = row.replaced ? `${row.replaced.name||''}�?{row.replaced.dept||''}）` : '';
-    const rep = row.replacement ? `${row.replacement.name||''}�?{row.replacement.dept||''}）` : '<span style="opacity:.6">??/span>';
+    const ori = row.replaced ? `${row.replaced.name||''}嚗?{row.replaced.dept||''}嚗 : '';
+    const rep = row.replacement ? `${row.replacement.name||''}嚗?{row.replacement.dept||''}嚗 : '<span style="opacity:.6">??/span>';
     html += `<tr><td>${t}</td><td>${row.prizeName||row.prizeId||''}</td><td>${ori}</td><td>${rep}</td></tr>`;
   }
   html += '</tbody></table>';
@@ -281,7 +281,7 @@ export async function renderStageDraw(mode){
         const winnersArray = Array.isArray(state.winners) ? state.winners : Object.values(state.winners);
         renderBatchGridCore(document.getElementById('stageGrid'), winnersArray, 'cms');
         fitWinnerCardText(document.getElementById('stageGrid'), { nameMax: 140, deptMax: 70 });
-        // keep ?�正?��? + 此�?尚�? in sync with tablet selection
+        // keep ?暹迤?賜? + 甇斤?撠? in sync with tablet selection
         await refreshCurrentPrizeHUD();
       }catch(e){/*ignore*/}
     };
@@ -497,7 +497,7 @@ if (exportBtn) exportBtn.onclick = ()=> exportCurrentWinners();
 
   if (undoBtn) {
     undoBtn.onclick = async ()=>{
-      const ok = confirm('確�?要復?��?一次抽?��??��?此�?作�?移除?�抽?��?得�??��?);
+      const ok = confirm('蝣箏?閬儔??銝甈⊥????甇文?雿?蝘駁??箇?敺???);
       if (!ok) return;
       try{
         await undoLastDraw();
@@ -510,7 +510,7 @@ if (exportBtn) exportBtn.onclick = ()=> exportCurrentWinners();
         // clear grid display
         renderBatchGridCore(gridEl, [], mode);
       }catch(err){
-        alert(err?.message || '?��?復�??��?');
+        alert(err?.message || '?⊥?敺拙??賜?');
       }
     };
   }

@@ -1,6 +1,6 @@
-import { FB } from './fb.js?v=20260521-jcdb';
-import { getAssets } from './core_firebase.js?v=20260521-jcdb';
-import { applyBackground } from './ui_background.js?v=20260521-jcdb';
+﻿import { FB } from './fb.js';
+import { getAssets } from './core_firebase.js';
+import { applyBackground } from './ui_background.js';
 
 const url = new URL(location.href);
 const eid = url.searchParams.get('event');
@@ -37,11 +37,11 @@ async function resolvePollId(eid){
 
 
 function renderBars(poll){
-  $('#pollQ').textContent = poll.question || '?�票';
+  $('#pollQ').textContent = poll.question || '?巨';
   const votes = poll.votes || {};
   const opts  = poll.options || [];
   const total = Object.values(votes).reduce((a,b)=> a + Number(b || 0), 0);
-  $('#total').textContent = `??${total} 票`;
+  $('#total').textContent = `??${total} 蟡灼;
 
   const bars = $('#bars'); bars.innerHTML = '';
   const max = Math.max(1, ...Object.values(votes).map(Number));
@@ -67,7 +67,7 @@ function renderBars(poll){
     fill.textContent = o.text;
     const label = document.createElement('div');
     label.className = 'barLabel';
-    label.textContent = `${count} 票`;
+    label.textContent = `${count} 蟡灼;
 
     barWrap.appendChild(fill);
     barWrap.appendChild(label);
@@ -116,7 +116,7 @@ async function playResultsAnimation(poll){
 
   wrap.classList.remove('hidden');
   chart.innerHTML = '';
-  status.textContent = '?�放結�??�畫中�?;
+  status.textContent = '?剜蝯??銝凌?;
 
   // build bars
   opts.forEach((o, idx) => {
@@ -126,7 +126,7 @@ async function playResultsAnimation(poll){
       <div class="crown">??</div>
       <div class="rFillWrap"><div class="rFill" data-count="${o.count}"></div></div>
       <div class="rLabel">${o.text}</div>
-      <div class="rCount">0 �?/div>
+      <div class="rCount">0 蟡?/div>
     `;
     chart.appendChild(bar);
   });
@@ -144,14 +144,14 @@ async function playResultsAnimation(poll){
     fill.style.height = '0';
     fill.getBoundingClientRect(); // force reflow
     fill.style.height = Math.max(8, pct * 2) + 'px'; // scale height
-    if (countEl) countEl.textContent = `${count} 票`;
+    if (countEl) countEl.textContent = `${count} 蟡灼;
     if (i === fills.length - 1 && crown) crown.style.opacity = '1';
     playResultSound(i);
 
     await new Promise(r => setTimeout(r, 900));
   }
 
-  status.textContent = '?�畫完畢?��?次�??�可?�播??;
+  status.textContent = '?摰??甈⊿?????;
 }
 
 async function getCurrentPollId(){

@@ -1,7 +1,7 @@
-// src/stage_draw_logic.js  ??full file
+﻿// src/stage_draw_logic.js  ??full file
 
 // --- Firebase REST helper (you already have this) ---
-import { FB } from './fb.js?v=20260521-jcdb';
+import { FB } from './fb.js';
 
 // Simple array-based reroll log (writes under /events/{eid}/rerollLog)
 async function addRerollLog(eid, entry){
@@ -25,10 +25,10 @@ async function fetchRerollLog(eid, limit=50){
 import {
   getCurrentEventId, getEventInfo, getPrizes, getCurrentPrizeIdRemote,
   setCurrentPrizeIdRemote, setPrizes, getPeople, setPeople
-} from './core_firebase.js?v=20260521-jcdb';
+} from './core_firebase.js';
 
 // draw core (persists winners + people)
-import { drawBatch as coreDrawBatch } from './stage_prizes_firebase.js?v=20260521-jcdb';
+import { drawBatch as coreDrawBatch } from './stage_prizes_firebase.js';
 
 // --- UI state (not saved) ---
 export const drawState = {
@@ -158,11 +158,11 @@ export async function renderRerollLog(){
 
   const list = await fetchRerollLog(eid, 50);
 
-  let html = '<table><thead><tr><th>?��?</th><th>?��?</th><th>?��?�?/th><th>?�為</th></tr></thead><tbody>';
+  let html = '<table><thead><tr><th>??</th><th>??</th><th>??銝?/th><th>?寧</th></tr></thead><tbody>';
   for(const row of (list||[])){
     const t = row.time ? new Date(row.time).toLocaleString() : '';
-    const ori = row.replaced ? `${row.replaced.name||''}�?{row.replaced.dept||''}）` : '';
-    const rep = row.replacement ? `${row.replacement.name||''}�?{row.replacement.dept||''}）` : '<span style="opacity:.6">??/span>';
+    const ori = row.replaced ? `${row.replaced.name||''}嚗?{row.replaced.dept||''}嚗 : '';
+    const rep = row.replacement ? `${row.replacement.name||''}嚗?{row.replacement.dept||''}嚗 : '<span style="opacity:.6">??/span>';
     html += `<tr><td>${t}</td><td>${row.prizeName||row.prizeId||''}</td><td>${ori}</td><td>${rep}</td></tr>`;
   }
   html += '</tbody></table>';
@@ -238,14 +238,14 @@ export async function performDraw(batchSize, hooks){
 /* ============================================================
    Reroll a single slot (only that person):
    - remove winner at slotIndex from prize.winners
-   - clear that person?�s people[].prize if it matched
+   - clear that person? people[].prize if it matched
    - draw exactly ONE replacement (coreDrawBatch(1))
    - log to /rerollLog
    - replace ONLY that card in the grid/UI
 ============================================================ */
 export async function rerollOne(slotIndex, hooks){
   const eid = getCurrentEventId();
-  if (!eid) throw new Error('尚未?��?活�?');
+  if (!eid) throw new Error('撠?豢?瘣餃?');
 
   const prizes = await getPrizes(eid);
   const curId = await getCurrentPrizeIdRemote(eid);
@@ -341,10 +341,10 @@ export async function clearScreenResults(gridEl){
 // --- Undo the most recent draw batch (remove winners + clear their prize) ---
 export async function undoLastDraw(){
   const batch = Array.isArray(drawState.lastBatch) ? drawState.lastBatch : [];
-  if (!batch.length) throw new Error('?��?沒�??�以復�??�抽??);
+  if (!batch.length) throw new Error('?桀?瘝??臭誑敺拙????);
 
   const eid = getCurrentEventId();
-  if (!eid) throw new Error('尚未?��?活�?');
+  if (!eid) throw new Error('撠?豢?瘣餃?');
 
   const [people, prizes, curId] = await Promise.all([
     getPeople(eid),
@@ -352,7 +352,7 @@ export async function undoLastDraw(){
     getCurrentPrizeIdRemote(eid)
   ]);
   const cur = (prizes || []).find(p => p && p.id === curId);
-  if (!cur) throw new Error('尚未?��??��??�目');
+  if (!cur) throw new Error('撠?豢??賜??');
 
   const keys = new Set(batch.map(w => winnerKey(w)));
 

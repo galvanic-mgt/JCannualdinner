@@ -1,6 +1,6 @@
-// Simple public-side listener for /ui/stageState
-import { FB } from './fb.js?v=20260521-jcdb';
-import { renderBatchGrid as renderBatchGridCore, fireConfettiAtCards } from './stage_draw_logic.js?v=20260521-jcdb';
+﻿// Simple public-side listener for /ui/stageState
+import { FB } from './fb.js';
+import { renderBatchGrid as renderBatchGridCore, fireConfettiAtCards } from './stage_draw_logic.js';
 
 function getEventId() {
   const u = new URL(location.href);
@@ -40,7 +40,7 @@ async function renderPollQRInGrid(grid, eid, ui){
   grid.innerHTML = `
     <div class="qr-panel">
       <div class="qr-box-inline">
-        <div class="qr-title">?�正?�票�?span>${title}</span></div>
+        <div class="qr-title">?暹迤?巨嚗?span>${title}</span></div>
         <div id="publicPollQRCanvas"></div>
         <div class="qr-link">${link}</div>
       </div>
@@ -80,7 +80,7 @@ function renderResultsStep(grid){
   grid.innerHTML = `
     <div class="results-chart">
       <div class="results-inner">
-        <div class="results-title">?�正?�票�?{title}</div>
+        <div class="results-title">?暹迤?巨嚗?{title}</div>
         <div class="results-bars">
           ${items.map((it, i) => `
             <div class="rBar">
@@ -91,7 +91,7 @@ function renderResultsStep(grid){
             </div>
           `).join('')}
         </div>
-        <div class="results-status">點�??�面?�放下�???{idx >= items.length ? ' ???�畫完畢' : ''}</div>
+        <div class="results-status">暺??恍?剜銝???{idx >= items.length ? ' ???摰' : ''}</div>
       </div>
     </div>
   `;
@@ -110,7 +110,7 @@ function renderResultsStep(grid){
         requestAnimationFrame(() => { fill.style.height = target + '%'; });
       }
       if (labelEl) labelEl.textContent = labelEl.dataset.text || '';
-      if (countEl) countEl.textContent = `${items[i].count} 票`;
+      if (countEl) countEl.textContent = `${items[i].count} 蟡灼;
       if (crown) crown.style.opacity = i === items.length - 1 ? 1 : 0;
     } else {
       if (fill) fill.style.height = '0%';
