@@ -3,7 +3,7 @@
 
 // === CONFIG ===
 // NOTE: this should match src/config.js.
-const FIREBASE_BASE = "https://jc-annualdinner-default-rtdb.asia-southeast1.firebasedatabase.app";
+const FIREBASE_BASE = "https://jc-annualdinner-default-rtdb.asia-southeast1.firebasedatabase.app/";
 
 // Helper to build URLs like `${FIREBASE_BASE}/events/e123/info.json`
 function dbUrl(path) {
@@ -43,6 +43,36 @@ function normaliseDigits(s) {
 }
 function normaliseText(s) {
   return String(s || "").trim().toLowerCase();
+}
+
+function hongKongDateTime(ts = Date.now()) {
+  return new Intl.DateTimeFormat("zh-HK", {
+    timeZone: "Asia/Hong_Kong",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false
+  }).format(new Date(ts));
+}
+
+function applyLandingBanner(bannerEl, url) {
+  if (!bannerEl || !url) return;
+  bannerEl.style.backgroundImage = `url('${url}')`;
+  bannerEl.style.backgroundSize = "100% auto";
+  bannerEl.style.backgroundRepeat = "no-repeat";
+  bannerEl.style.backgroundPosition = "top center";
+  bannerEl.style.display = "block";
+
+  const img = new Image();
+  img.onload = () => {
+    if (img.naturalWidth > 0 && img.naturalHeight > 0) {
+      bannerEl.style.aspectRatio = `${img.naturalWidth} / ${img.naturalHeight}`;
+    }
+  };
+  img.src = url;
 }
 
 let landingPeople = [];
@@ -364,20 +394,20 @@ async function loadEventHeader(eid) {
   const parkingTitleEl = document.getElementById("parkingTitle");
 
   const defaultCheckinTitle = `到場報到（輸入${labelPhone}或${labelDept}）`;
-  const defaultCheckinLabel = `${labelPhone} / ${labelDept}`;
-  const defaultCheckinPlaceholder = `請輸入你的${labelPhone}或${labelDept}`;
+  const defaultCheckinLabel = "***";
+  const defaultCheckinPlaceholder = "(請輸入電話 Mobile No.)";
 
   if (titleEl) titleEl.textContent = pick(info.landingCheckinTitle, defaultCheckinTitle);
   if (labelEl) labelEl.textContent = pick(info.landingCheckinLabel, defaultCheckinLabel);
   if (inputEl) inputEl.placeholder = pick(info.landingCheckinPlaceholder, defaultCheckinPlaceholder);
   if (btnEl) btnEl.textContent = pick(info.landingCheckinButton, "報到");
   if (seatTitleEl) seatTitleEl.textContent = pick(info.landingSeatTitle, "歡迎！你的座位安排");
-  if (tipTitleEl) tipTitleEl.textContent = pick(info.landingTipTitle, "活動提示");
+  if (tipTitleEl) tipTitleEl.textContent = pick(info.landingTipTitle, "歡迎蒞臨 Welcome !");
   if (tipBodyEl) tipBodyEl.textContent = pick(
     info.landingTipBody,
     "請根據場內指示入座，如有任何問題，歡迎向現場工作人員查詢。"
   );
-  if (transportTitleEl) transportTitleEl.textContent = pick(info.landingTransportTitle, "交通資訊");
+  if (transportTitleEl) transportTitleEl.textContent = pick(info.landingTransportTitle, "今晚設有大抽獎，祝好運!");
   if (busTitleEl) busTitleEl.textContent = pick(info.landingBusTitle, "巴士");
   if (trainTitleEl) trainTitleEl.textContent = pick(info.landingTrainTitle, "地鐵 / 火車");
   if (parkingTitleEl) parkingTitleEl.textContent = pick(info.landingParkingTitle, "泊車");
@@ -391,6 +421,13 @@ async function loadEventHeader(eid) {
     $("mapBtn").style.display = url ? "inline-flex" : "none";
     if (url) $("mapBtn").href = url;
   }
+
+  const livePhotoButton = document.getElementById("livePhotoLinkButton");
+  if (livePhotoButton) {
+    const livePhotoLink = String(info.landingLivePhotoLink || "").trim();
+    livePhotoButton.style.display = livePhotoLink ? "inline-flex" : "none";
+    if (livePhotoLink) livePhotoButton.href = livePhotoLink;
+  }
   const hasNotes = Boolean((info.notes || "").trim());
   const hasMap = Boolean((info.mapUrl || "").trim());
   const hasTransport = hasBus || hasTrain || hasParking || hasNotes || hasMap;
@@ -399,20 +436,24 @@ async function loadEventHeader(eid) {
   const [
     logoUrl,
     bannerUrl,
+    landingBannerUrl,
     backgroundUrl,
-    photos
+    photos,
+    assetSettings
   ] = await Promise.all([
     dbGet(`/events/${eid}/logo`),
     dbGet(`/events/${eid}/banner`),
+    dbGet(`/events/${eid}/landingBanner`).catch(() => ""),
     dbGet(`/events/${eid}/background`),
-    dbGet(`/events/${eid}/photos`)
+    dbGet(`/events/${eid}/photos`),
+    dbGet(`/events/${eid}/assetSettings`).catch(() => ({}))
   ]);
 
   const bannerEl = document.getElementById("banner");
   const logoEl   = document.getElementById("logo");
 
   const finalLogo   = logoUrl   || "";
-  const finalBanner = bannerUrl || "";
+  const finalBanner = assetSettings?.landingBanner || landingBannerUrl || "";
   let   finalBg     = backgroundUrl || "";
 
   if (!finalBg) {
@@ -420,7 +461,7 @@ async function loadEventHeader(eid) {
       // assume photos[] is array of URL strings
       finalBg = photos[0];
     } else {
-      finalBg = finalBanner;
+      finalBg = finalBanner || bannerUrl || "";
     }
   }
 
@@ -430,8 +471,7 @@ async function loadEventHeader(eid) {
   }
 
   if (bannerEl && finalBanner) {
-    bannerEl.style.backgroundImage = `url('${finalBanner}')`;
-    bannerEl.style.display = "block";
+    applyLandingBanner(bannerEl, finalBanner);
   }
 
   // Page background with 25% dark overlay
@@ -441,6 +481,8 @@ async function loadEventHeader(eid) {
       `linear-gradient(rgba(0,0,0,${dim}), rgba(0,0,0,${dim})), url('${finalBg}')`;
     document.body.style.backgroundSize = "cover";
     document.body.style.backgroundPosition = "center center";
+    document.body.style.backgroundRepeat = "no-repeat";
+    document.body.style.backgroundAttachment = "fixed";
   }
 }
 
@@ -508,10 +550,20 @@ function attachCheckin(eid) {
         return;
       }
 
-      // Mark as present (checkedIn = true)
-      await dbPatch(`/events/${eid}/people/${foundIndex}`, { checkedIn: true });
+      // Mark as present and record landing-page login times in Hong Kong time.
+      const now = Date.now();
+      const firstLoginAt = found.firstLoginAt || now;
+      const firstLoginAtHK = found.firstLoginAtHK || hongKongDateTime(firstLoginAt);
+      const loginPatch = {
+        checkedIn: true,
+        firstLoginAt,
+        firstLoginAtHK,
+        lastLoginAt: now,
+        lastLoginAtHK: hongKongDateTime(now)
+      };
+      await dbPatch(`/events/${eid}/people/${foundIndex}`, loginPatch);
       currentGuestIndex = foundIndex;
-      landingPeople[foundIndex] = { ...found, checkedIn: true };
+      landingPeople[foundIndex] = { ...found, ...loginPatch };
       saveGuestSession();
 
       const name    = found.name || "";

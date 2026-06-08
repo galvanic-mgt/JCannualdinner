@@ -1,6 +1,6 @@
 // Customer pre-attendance reply page. Uses Firebase Realtime Database REST API.
 
-const PRE_ATTENDANCE_FIREBASE_BASE = "https://jc-annualdinner-default-rtdb.asia-southeast1.firebasedatabase.app";
+const PRE_ATTENDANCE_FIREBASE_BASE = "https://jc-annualdinner-default-rtdb.asia-southeast1.firebasedatabase.app/";
 const PRE_ATTENDANCE_CONFIG = window.PRE_ATTENDANCE_CONFIG || {};
 
 function dbUrl(path) {

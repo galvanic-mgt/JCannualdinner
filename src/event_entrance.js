@@ -1,5 +1,5 @@
 const ENTRANCE_CONFIG = window.PRE_EVENT_APPLY_CONFIG || {};
-const ENTRANCE_FIREBASE_BASE = ENTRANCE_CONFIG.firebaseBase || "https://jc-annualdinner-default-rtdb.asia-southeast1.firebasedatabase.app";
+const ENTRANCE_FIREBASE_BASE = ENTRANCE_CONFIG.firebaseBase || "https://jc-annualdinner-default-rtdb.asia-southeast1.firebasedatabase.app/";
 
 let entranceEventId = "";
 

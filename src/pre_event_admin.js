@@ -1,5 +1,5 @@
 const PRE_EVENT_ADMIN_CONFIG = window.PRE_EVENT_APPLY_CONFIG || {};
-const ADMIN_FIREBASE_BASE = PRE_EVENT_ADMIN_CONFIG.firebaseBase || "https://jc-annualdinner-default-rtdb.asia-southeast1.firebasedatabase.app";
+const ADMIN_FIREBASE_BASE = PRE_EVENT_ADMIN_CONFIG.firebaseBase || "https://jc-annualdinner-default-rtdb.asia-southeast1.firebasedatabase.app/";
 
 let currentRows = [];
 let currentPeople = [];
@@ -57,6 +57,10 @@ function setStatus(text, isError) {
   el.textContent = text || "";
   el.style.whiteSpace = "pre-line";
   el.classList.toggle("is-error", Boolean(isError));
+}
+
+function removeRevealDaysControl() {
+  $("revealDaysBeforeEvent")?.closest(".pe-field")?.remove();
 }
 
 function toLocalDateInput(value) {
@@ -223,7 +227,6 @@ async function loadApplications() {
   currentPeople = Array.isArray(people) ? people : [];
   $("registrationDeadline").value = toLocalDateInput(settings?.registrationDeadline);
   $("revealFrom").value = toLocalDateInput(settings?.revealFrom);
-  $("revealDaysBeforeEvent").value = settings?.revealDaysBeforeEvent || PRE_EVENT_ADMIN_CONFIG.revealDaysBeforeEvent || 7;
   renderRows(currentRows);
   setStatus(TEXT.loaded(currentRows.length), false);
 }
@@ -236,8 +239,7 @@ async function saveSettings() {
   }
   await dbPatch(`/events/${eventId}/preEventSettings`, {
     registrationDeadline: fromLocalDateInput($("registrationDeadline").value),
-    revealFrom: fromLocalDateInput($("revealFrom").value),
-    revealDaysBeforeEvent: Math.min(7, Math.max(3, Number($("revealDaysBeforeEvent").value || 7)))
+    revealFrom: fromLocalDateInput($("revealFrom").value)
   });
   setStatus(TEXT.settingsSaved, false);
 }
@@ -358,6 +360,7 @@ function bind() {
 
 function boot() {
   $("eventIdInput").value = queryParam("event") || queryParam("eid") || "";
+  removeRevealDaysControl();
   bind();
   renderRows([]);
   if ($("eventIdInput").value) {

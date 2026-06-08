@@ -1,6 +1,6 @@
 // Standalone pre-attendance export tool. It does not depend on the CMS.
 
-const EXPORT_FIREBASE_BASE = "https://jc-annualdinner-default-rtdb.asia-southeast1.firebasedatabase.app";
+const EXPORT_FIREBASE_BASE = "https://jc-annualdinner-default-rtdb.asia-southeast1.firebasedatabase.app/";
 
 let currentReplies = [];
 

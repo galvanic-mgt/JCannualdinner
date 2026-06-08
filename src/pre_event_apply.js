@@ -1,5 +1,5 @@
 const PRE_EVENT_CONFIG = window.PRE_EVENT_APPLY_CONFIG || {};
-const FIREBASE_BASE = PRE_EVENT_CONFIG.firebaseBase || "https://jc-annualdinner-default-rtdb.asia-southeast1.firebasedatabase.app";
+const FIREBASE_BASE = PRE_EVENT_CONFIG.firebaseBase || "https://jc-annualdinner-default-rtdb.asia-southeast1.firebasedatabase.app/";
 
 let currentEventId = "";
 let currentGuest = null;
