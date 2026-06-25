@@ -1,100 +1,300 @@
-<!doctype html>
-<html lang="zh-Hant">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>活動前登記 Pre-event Application</title>
-  <link rel="stylesheet" href="./pre_event_apply.css" />
-  <link rel="icon" href="data:," />
-</head>
-<body>
-  <main class="pe-shell">
-    <section class="pe-hero">
-      <img id="eventLogo" class="pe-logo" alt="" />
-      <p id="eventClient" class="pe-kicker"></p>
-      <h1 id="eventTitle">活動前登記<br><span class="pe-en">Pre-event Application</span></h1>
-      <p id="eventMeta" class="pe-muted"></p>
-    </section>
+:root {
+  --bg: #f5f7fb;
+  --ink: #14171f;
+  --muted: #687083;
+  --panel: rgba(255, 255, 255, 0.92);
+  --line: rgba(20, 23, 31, 0.12);
+  --accent: #155eef;
+  --accent-dark: #0f48ba;
+  --danger: #b42318;
+}
 
-    <section id="loginPanel" class="pe-panel">
-      <h2>登入<br><span class="pe-en">Login</span></h2>
-      <p class="pe-muted">請輸入員工證編號以查看或更改你的選擇。<br>Enter your Badge Card Number to review or update your choices.
-</p>
-      <form id="loginForm" class="pe-form">
-        <label class="pe-field">
-          <span>員工證編號<br><span class="pe-en">Badge Card Number</span></span>
-          <input id="batchInput" autocomplete="off" required />
-        </label>
-        <button class="pe-primary" type="submit">繼續<br><span class="pe-en">Continue</span></button>
-      </form>
-      <p id="loginMessage" class="pe-message" role="status"></p>
-    </section>
+* { box-sizing: border-box; }
 
-    <section id="applicationPanel" class="pe-panel" hidden>
-      <div class="pe-panel-head">
-        <div>
-          <p class="pe-kicker">已確認選擇<br><span class="pe-en">Confirmed choices</span></p>
-          <h2 id="guestName">嘉賓<br><span class="pe-en">Guest</span></h2>
-          <p id="guestInfo" class="pe-muted"></p>
-        </div>
-      </div>
+[hidden] { display: none !important; }
 
-      <div id="lockNotice" class="pe-notice"></div>
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Inter, "Noto Sans", system-ui, -apple-system, Segoe UI, sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+}
 
-      <form id="applicationForm" class="pe-form">
-        <fieldset class="pe-choice">
-          <legend>出席<br><span class="pe-en">Attendance</span></legend>
-          <label><input type="radio" name="attending" value="yes" required /> 出席<br><span class="pe-en">Attend</span></label>
-          <label><input type="radio" name="attending" value="no" required /> 不出席<br><span class="pe-en">Not attending</span></label>
-        </fieldset>
+.pe-shell {
+  width: min(1040px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 28px 0 56px;
+}
 
-        <div id="choiceFields" class="pe-flow pe-collapsible">
-          <section id="transportStep" class="pe-step">
-            <label class="pe-field">
-              <span>交通方式<br><span class="pe-en">Transport</span></span>
-              <select id="transport" required></select>
-            </label>
-          </section>
+.pe-hero {
+  padding: 18px 0 22px;
+}
 
-          <section id="shuttleFields" class="pe-step pe-shuttle pe-collapsible is-collapsed" aria-hidden="true">
-            <label class="pe-field">
-              <span>出發地點及時間<br><span class="pe-en">Pickup point and departure time</span></span>
-              <select id="pickupLocation"></select>
-            </label>
-            <label class="pe-field">
-              <span>回程地點及時間<br><span class="pe-en">Return point and return time</span></span>
-              <select id="returnLocation"></select>
-            </label>
-            <select id="goTime" class="pe-visually-hidden" tabindex="-1" aria-hidden="true"></select>
-            <select id="returnTime" class="pe-visually-hidden" tabindex="-1" aria-hidden="true"></select>
-          </section>
+.pe-logo {
+  display: none;
+  max-width: 180px;
+  max-height: 90px;
+  object-fit: contain;
+  margin-bottom: 18px;
+}
 
-          <section id="mealStep" class="pe-step">
-            <label class="pe-field">
-              <span>餐飲偏好<br><span class="pe-en">Meal preference</span></span>
-              <select id="meal" required></select>
-            </label>
-          </section>
-        </div>
+.pe-kicker {
+  margin: 0 0 6px;
+  color: var(--accent-dark);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
 
-        <label class="pe-field">
-          <span>備註<br><span class="pe-en">Remarks</span></span>
-          <textarea id="remarks" rows="3"></textarea>
-        </label>
+h1, h2 {
+  margin: 0;
+  letter-spacing: 0;
+}
 
-        <button id="submitButton" class="pe-primary" type="submit">儲存選擇<br><span class="pe-en">Save choices</span></button>
-        <p id="formMessage" class="pe-message" role="status"></p>
-      </form>
-    </section>
+h1 {
+  font-size: clamp(32px, 5vw, 56px);
+  line-height: 1.04;
+}
 
-    <section id="detailPanel" class="pe-panel" hidden>
-      <p class="pe-kicker">最終安排<br><span class="pe-en">Final arrangement</span></p>
-      <h2>活動詳情<br><span class="pe-en">Event details</span></h2>
-      <div id="detailGrid" class="pe-summary"></div>
-    </section>
-  </main>
+h2 {
+  font-size: 24px;
+  line-height: 1.2;
+}
 
-  <script src="./src/pre_event_apply_config.js"></script>
-  <script src="./src/pre_event_apply.js"></script>
-</body>
-</html>
+.pe-muted {
+  color: var(--muted);
+}
+
+.pe-en {
+  color: inherit;
+  font-size: 0.86em;
+  font-weight: inherit;
+  opacity: 0.78;
+}
+
+.pe-panel {
+  margin-top: 16px;
+  padding: 20px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 16px 36px rgba(20, 23, 31, 0.08);
+}
+
+.pe-panel-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 18px;
+}
+
+.pe-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.pe-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.pe-flow {
+  display: grid;
+  gap: 14px;
+}
+
+.pe-step {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.pe-step.pe-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.pe-shuttle {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.pe-collapsible {
+  overflow: hidden;
+  max-height: 900px;
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    max-height 320ms ease,
+    opacity 220ms ease,
+    transform 260ms ease,
+    padding-top 260ms ease,
+    padding-bottom 260ms ease,
+    margin-top 260ms ease,
+    border-color 260ms ease;
+}
+
+.pe-collapsible.is-collapsed {
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-8px);
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-top: -6px;
+  border-color: transparent;
+  pointer-events: none;
+}
+
+.pe-static-field strong {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f7f9fc;
+  color: var(--accent-dark);
+}
+
+.pe-visually-hidden {
+  position: absolute;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.pe-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 700;
+}
+
+.pe-field input,
+.pe-field select,
+.pe-field textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 500;
+}
+
+.pe-choice {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.pe-choice legend {
+  padding: 0 6px;
+  font-weight: 700;
+}
+
+.pe-choice label {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  min-height: 36px;
+}
+
+.pe-primary,
+.pe-secondary {
+  border: 0;
+  border-radius: 8px;
+  min-height: 44px;
+  padding: 10px 16px;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.pe-primary {
+  color: #fff;
+  background: var(--accent);
+}
+
+.pe-primary:hover { background: var(--accent-dark); }
+.pe-primary:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.pe-secondary {
+  color: var(--ink);
+  background: #eef2f7;
+  border: 1px solid var(--line);
+}
+
+.pe-message {
+  min-height: 20px;
+  margin: 0;
+  color: var(--muted);
+}
+
+.pe-message.is-error,
+.pe-notice.is-error {
+  color: var(--danger);
+}
+
+.pe-notice {
+  display: none;
+  margin: 0 0 16px;
+  padding: 12px;
+  border-radius: 8px;
+  background: #eef4ff;
+  color: #1849a9;
+  font-weight: 700;
+}
+
+.pe-notice:not(:empty) { display: block; }
+
+.pe-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.pe-summary div {
+  min-height: 64px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.pe-summary strong {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+@media (max-width: 720px) {
+  .pe-shell { width: min(100% - 24px, 1040px); padding-top: 18px; }
+  .pe-grid,
+  .pe-summary { grid-template-columns: 1fr; }
+  .pe-step,
+  .pe-step.pe-grid,
+  .pe-shuttle { grid-template-columns: 1fr; }
+  .pe-panel-head { flex-direction: column; }
+  h1 { font-size: 34px; }
+}

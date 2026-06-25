@@ -1,116 +1,98 @@
-import traceback
-import json
-from functools import partial
-from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
-from pathlib import Path
-from urllib import error, parse, request
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover" />
+  <title>活動報到 · 現場參加者入口</title>
+  <link rel="stylesheet" href="./landing.css" />
+</head>
+<body>
+  <!-- 背景 Banner（由 landing.js 設定 background-image） -->
+  <div id="banner" class="lp-banner"></div>
 
+  <main class="lp-wrap">
+    <!-- 活動資訊 / LOGO 區 -->
+    <section class="lp-card lp-hero">
+      <img id="logo" class="lp-logo" alt="logo" />
+      <h1 id="evTitle">活動</h1>
+      <p id="evDateTime" class="lp-muted"></p>
+      <p id="evVenue"></p>
+      <p id="evAddress" class="lp-muted"></p>
+    </section>
 
-HOST = "127.0.0.1"
-PORT = 8000
-ROOT = Path(__file__).resolve().parent
-LOG_PATH = ROOT / "live-server.log"
-FIREBASE_BASE = "https://jc-annualdinner-default-rtdb.asia-southeast1.firebasedatabase.app"
+    <!-- 到場報到：電話 或 代碼 -->
+    <section class="lp-card" id="transportSection">
+      <h3 id="checkinTitle">到場報到（輸入電話或代號）</h3>
+      <form id="checkinForm" class="lp-form">
+        <label class="lp-field">
+          <span id="checkinLabel">電話 / 代號</span>
+          <!-- 接受電話或代碼（可包含英文字母），驗證交由 landing.js 處理 -->
+          <input
+            id="codeDigits"
+            inputmode="text"
+            placeholder="請輸入你的電話或報到代號"
+            required
+          />
+        </label>
+        <button id="checkinButton" class="lp-primary" type="submit">報到</button>
+      </form>
+      <p id="checkinMsg" class="lp-msg"></p>
 
+      <!-- 座位資訊：只有在有枱號 / 座位時才顯示 -->
+      <div id="seatCard" class="lp-card" style="display:none; margin-top:8px">
+        <h4 id="seatTitle">歡迎！你的座位安排</h4>
+        <p id="seatInfo" style="font-weight:700"></p>
+      </div>
 
-class QuietHandler(SimpleHTTPRequestHandler):
-    def firebase_url(self):
-        parsed = parse.urlparse(self.path)
-        params = parse.parse_qs(parsed.query)
-        raw_path = params.get("path", [""])[0]
-        if not raw_path:
-            return ""
-        if not raw_path.startswith("/"):
-            raw_path = "/" + raw_path
-        return f"{FIREBASE_BASE}{raw_path}.json"
+      <div id="gameBoothPanel" class="lp-card lp-game-booths" style="display:none; margin-top:8px">
+        <div class="lp-booth-head">
+          <h4>遊戲攤位參與紀錄 (Game Booth Participation)</h4>
+          <button id="startBoothScanner" class="lp-primary" type="button">開啟相機掃描 QR (Open camera to scan QR)</button>
+          <button id="signOutBoothSession" class="lp-secondary" type="button">登出測試 (Sign out for testing)</button>
+        </div>
+        <video id="boothScannerVideo" class="lp-booth-video" playsinline muted></video>
+        <div class="lp-booth-manual">
+          <input id="manualBoothCode" placeholder="如相機未能使用，可貼上攤位 QR 連結或代碼 (If camera is unavailable, paste booth QR link or code)">
+          <button id="manualBoothSubmit" class="lp-primary" type="button">提交 (Submit)</button>
+        </div>
+        <div id="boothStatusList" class="lp-booth-status-list"></div>
+      </div>
+      <a id="livePhotoLinkButton" class="lp-primary lp-live-photo-link" href="#" target="_blank" rel="noopener" style="display:none">LIVE PHOTO</a>
+    </section>
 
-    def proxy_firebase(self):
-        target = self.firebase_url()
-        if not target:
-            self.send_error(400, "Missing Firebase path")
-            return
+    <!-- 活動提示（選填） -->
+    <section class="lp-card">
+      <h3 id="tipTitle">活動提示</h3>
+      <p id="tipBody" class="lp-muted">
+        請根據場內指示入座，如有任何問題，歡迎向現場工作人員查詢。
+      </p>
+    </section>
 
-        length = int(self.headers.get("Content-Length", "0") or "0")
-        body = self.rfile.read(length) if length else None
-        headers = {"Content-Type": "application/json"}
-        req = request.Request(target, data=body, headers=headers, method=self.command)
-        try:
-            with request.urlopen(req, timeout=20) as res:
-                data = res.read()
-                self.send_response(res.status)
-                self.send_header("Content-Type", res.headers.get("Content-Type", "application/json"))
-                self.send_header("Access-Control-Allow-Origin", "*")
-                self.end_headers()
-                self.wfile.write(data)
-        except error.HTTPError as exc:
-            data = exc.read()
-            self.send_response(exc.code)
-            self.send_header("Content-Type", exc.headers.get("Content-Type", "application/json"))
-            self.send_header("Access-Control-Allow-Origin", "*")
-            self.end_headers()
-            self.wfile.write(data)
-        except Exception as exc:
-            payload = json.dumps({"error": str(exc)}).encode("utf-8")
-            self.send_response(502)
-            self.send_header("Content-Type", "application/json")
-            self.send_header("Access-Control-Allow-Origin", "*")
-            self.end_headers()
-            self.wfile.write(payload)
+    <!-- 交通資訊（由 /events/{eid}/info 填充） -->
+    <section class="lp-card" id="howToGetThereSection">
+      <h3 id="transportTitle">交通資訊</h3>
+      <div class="lp-grid-2">
+        <div id="busBlock">
+          <h4 id="busTitle">巴士</h4>
+          <p id="evBus" class="lp-muted"></p>
+        </div>
+        <div id="trainBlock">
+          <h4 id="trainTitle">地鐵 / 火車</h4>
+          <p id="evTrain" class="lp-muted"></p>
+        </div>
+        <div id="parkingBlock">
+          <h4 id="parkingTitle">泊車</h4>
+          <p id="evParking" class="lp-muted"></p>
+        </div>
+      </div>
+      <a id="mapBtn" class="lp-primary lp-link" target="_blank">在地圖打開</a>
+      <p id="evNotes" class="lp-muted" style="margin-top:8px"></p>
+    </section>
+  </main>
 
-    def do_OPTIONS(self):
-        self.send_response(204)
-        self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, PUT, PATCH, DELETE, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type")
-        self.end_headers()
-
-    def do_GET(self):
-        if self.path.startswith("/__firebase"):
-            self.proxy_firebase()
-            return
-        super().do_GET()
-
-    def do_PUT(self):
-        if self.path.startswith("/__firebase"):
-            self.proxy_firebase()
-            return
-        self.send_error(405)
-
-    def do_PATCH(self):
-        if self.path.startswith("/__firebase"):
-            self.proxy_firebase()
-            return
-        self.send_error(405)
-
-    def do_DELETE(self):
-        if self.path.startswith("/__firebase"):
-            self.proxy_firebase()
-            return
-        self.send_error(405)
-
-    def end_headers(self):
-        self.send_header("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
-        self.send_header("Pragma", "no-cache")
-        self.send_header("Expires", "0")
-        super().end_headers()
-
-    def log_message(self, format, *args):
-        with LOG_PATH.open("a", encoding="utf-8") as log:
-            log.write("%s - %s\n" % (self.log_date_time_string(), format % args))
-
-
-def main():
-    handler = partial(QuietHandler, directory=str(ROOT))
-    server = ThreadingHTTPServer((HOST, PORT), handler)
-    with LOG_PATH.open("a", encoding="utf-8") as log:
-        log.write(f"Serving {ROOT} at http://{HOST}:{PORT}/\n")
-    server.serve_forever()
-
-
-if __name__ == "__main__":
-    try:
-        main()
-    except Exception:
-        with LOG_PATH.open("a", encoding="utf-8") as log:
-            log.write(traceback.format_exc())
-        raise
+  <!-- landing.js：負責讀取 Firebase、顯示 LOGO / Banner / 背景、以及報到邏輯 -->
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+  <script src="./src/landing.js"></script>
+</body>
+</html>
