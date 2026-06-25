@@ -29,7 +29,7 @@ const TEXT = {
   pickupTime: "出發時間\nDeparture time",
   pickupPoint: "出發地點\nPickup point",
   returnPoint: "回程地點\nReturn point",
-  returnTime: "回程時間\nReturn time",
+  returnTime: "回程開車時間\nOutbound departure time",
   meal: "餐飲\nMeal",
   tableSeat: "台號 座位\nTable Seat",
   luckyDraw: "抽獎結果\nLucky draw result"
@@ -124,7 +124,21 @@ function normaliseTransportValue(value) {
     flight: "airport_express",
     mtr: "self_arrangement"
   };
-  return aliases[value] || value || "self_arrangement";
+  const normalised = aliases[value] || value || "";
+  const options = Array.isArray(PRE_EVENT_CONFIG.transportOptions) ? PRE_EVENT_CONFIG.transportOptions : [];
+  if (options.some(item => item.value === normalised)) return normalised;
+  return options[0]?.value || "shuttle_bus";
+}
+
+function normaliseMealValue(value) {
+  const aliases = {
+    non_vegetarian: "regular_menu",
+    vegetarian: "vegetarian_menu"
+  };
+  const normalised = aliases[value] || value || "";
+  const options = Array.isArray(PRE_EVENT_CONFIG.mealOptions) ? PRE_EVENT_CONFIG.mealOptions : [];
+  if (options.some(item => item.value === normalised)) return normalised;
+  return options[0]?.value || "regular_menu";
 }
 
 function fillSelect(id, items) {
@@ -261,7 +275,7 @@ function applyApplicationToForm(app) {
   $("pickupLocation").value = app.pickupLocation || "";
   $("returnTime").value = app.returnTime || "";
   $("returnLocation").value = app.returnLocation || "";
-  $("meal").value = app.meal || "non_vegetarian";
+  $("meal").value = normaliseMealValue(app.meal);
   $("remarks").value = app.remarks || "";
   syncShuttleTimes();
   updateChoiceVisibility();
@@ -336,18 +350,15 @@ function renderDetails(app, guest, canReveal) {
   }
 
   const final = app.finalArrangement || {};
-  const rewardRounds = guest.rewardRounds || {};
-  const roundText = Object.entries(rewardRounds).map(([round, prize]) => `${round}: ${prize}`).join(", ");
   const rows = [
     [TEXT.attendance, app.attending === false ? TEXT.notAttending : TEXT.attending],
     [TEXT.transport, final.transportLabel || app.transportLabel || app.transport || ""],
     [TEXT.pickupTime, final.pickupTime || final.goTime || app.goTime || ""],
     [TEXT.pickupPoint, final.pickupLocation || app.pickupLocationLabel || app.pickupLocation || ""],
-    [TEXT.returnPoint, final.returnLocation || app.returnLocationLabel || app.returnLocation || ""],
     [TEXT.returnTime, final.returnTime || app.returnTime || ""],
+    [TEXT.returnPoint, final.returnLocation || app.returnLocationLabel || app.returnLocation || ""],
     [TEXT.meal, final.mealLabel || app.mealLabel || app.meal || ""],
-    [TEXT.tableSeat, [final.table || guest.table, final.seat || guest.seat].filter(Boolean).join("  ")],
-    [TEXT.luckyDraw, [guest.prize, roundText].filter(Boolean).join(" | ")]
+    [TEXT.tableSeat, [final.table || guest.table, final.seat || guest.seat].filter(Boolean).join("  ")]
   ];
 
   panel.hidden = false;
@@ -375,7 +386,18 @@ async function showGuest(rawBatch) {
   setMultilineText($("guestName"), guest.name || TEXT.guest);
   $("guestInfo").textContent = [guest.dept, guest.code, guest.phone].filter(Boolean).join(" | ");
   $("loginPanel").hidden = true;
+  renderDetails(currentApplication, guest, canReveal);
+
+  if (canReveal) {
+    $("applicationPanel").hidden = true;
+    $("lockNotice").hidden = true;
+    $("lockNotice").textContent = "";
+    setMessage("loginMessage", "", false);
+    return;
+  }
+
   $("applicationPanel").hidden = false;
+  $("lockNotice").hidden = false;
   $("lockNotice").textContent = locked
     ? TEXT.lockedNotice
     : deadline
@@ -385,7 +407,6 @@ async function showGuest(rawBatch) {
 
   applyApplicationToForm(currentApplication);
   setFormDisabled(Boolean(locked));
-  renderDetails(currentApplication, guest, canReveal);
   setMessage("loginMessage", "", false);
 }
 

@@ -95,13 +95,18 @@ function renderEntrance(guest, app, eventInfo, ui) {
   const voteLink = currentPoll
     ? `vote.html?event=${encodeURIComponent(entranceEventId)}&poll=${encodeURIComponent(currentPoll)}&batch=${encodeURIComponent(guest.code || "")}`
     : "";
-  const menuText = eventInfo?.menu || final.menu || app.menu || "Please refer to the event team.";
+  const menuText = final.mealLabel || app.mealLabel || eventInfo?.menu || final.menu || app.menu || "Please refer to the event team.";
   const gameStatus = guest.gameClaimed || guest.gamePlayed ? "Recorded" : "Available";
   const giftStatus = guest.giftClaimed ? "Redeemed" : "Not redeemed";
   const rows = [
     ["Seat", [final.table || guest.table, final.seat || guest.seat].filter(Boolean).join(" / ") || "-"],
     ["Menu", menuText],
-    ["Transport", [final.pickupTime || app.goTime, final.pickupLocation || app.pickupLocation, final.returnTime || app.returnTime].filter(Boolean).join(" | ") || "-"],
+    ["Transport", [
+      final.pickupTime || app.goTime,
+      final.pickupLocation || app.pickupLocationLabel || app.pickupLocation,
+      final.returnTime || app.returnTime,
+      final.returnLocation || app.returnLocationLabel || app.returnLocation
+    ].filter(Boolean).join(" | ") || "-"],
     ["Game area", gameStatus],
     ["Gift redemption", giftStatus],
     ["Voting", voteLink ? `<a href="${voteLink}">Open voting</a>` : "Voting not open"],

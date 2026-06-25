@@ -1,89 +1,173 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover" />
-  <title>Attendance Reply</title>
-  <link rel="stylesheet" href="./pre_attendance.css" />
-  <link rel="icon" href="data:," />
-</head>
-<body>
-  <main class="pa-shell">
-    <section class="pa-hero">
-      <img id="eventLogo" class="pa-logo" alt="" />
-      <p id="eventClient" class="pa-kicker"></p>
-      <h1 id="pageTitle">Attendance Reply</h1>
-      <p id="pageIntro" class="pa-intro"></p>
-      <div class="pa-event">
-        <strong id="eventTitle"></strong>
-        <span id="eventDateTime"></span>
-        <span id="eventVenue"></span>
-      </div>
-    </section>
+:root {
+  --px-bg: #f4f6f8;
+  --px-panel: #ffffff;
+  --px-ink: #17212f;
+  --px-muted: #607086;
+  --px-line: #d9e1ea;
+  --px-accent: #0b7a75;
+  --px-accent-dark: #075b57;
+}
 
-    <section class="pa-panel">
-      <form id="preAttendanceForm" class="pa-form">
-        <div class="pa-grid">
-          <label class="pa-field">
-            <span id="labelName">Full name</span>
-            <input id="guestName" name="guestName" autocomplete="name" required />
-          </label>
-          <label class="pa-field">
-            <span id="labelCompany">Company / Department</span>
-            <input id="guestCompany" name="guestCompany" autocomplete="organization" />
-          </label>
-          <label class="pa-field">
-            <span id="labelPhone">Phone</span>
-            <input id="guestPhone" name="guestPhone" autocomplete="tel" inputmode="tel" required />
-          </label>
-          <label class="pa-field">
-            <span id="labelEmail">Email</span>
-            <input id="guestEmail" name="guestEmail" autocomplete="email" inputmode="email" />
-          </label>
-        </div>
+* {
+  box-sizing: border-box;
+}
 
-        <fieldset class="pa-choice">
-          <legend id="attendanceLegend">Will you attend?</legend>
-          <div id="attendanceOptions" class="pa-radio-row"></div>
-        </fieldset>
+body {
+  margin: 0;
+  background: var(--px-bg);
+  color: var(--px-ink);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+}
 
-        <section id="tripSection" class="pa-trip">
-          <div class="pa-grid">
-            <label class="pa-field">
-              <span id="labelTransportation">Transportation</span>
-              <select id="transportation" name="transportation"></select>
-            </label>
-            <label class="pa-field">
-              <span id="labelGoTime">Go time</span>
-              <select id="goTime" name="goTime"></select>
-            </label>
-            <label class="pa-field">
-              <span id="labelPickup">Pickup location</span>
-              <select id="pickupLocation" name="pickupLocation"></select>
-            </label>
-            <label class="pa-field">
-              <span id="labelReturnTime">Return time</span>
-              <select id="returnTime" name="returnTime"></select>
-            </label>
-            <label class="pa-field">
-              <span id="labelReturnLocation">Return location</span>
-              <select id="returnLocation" name="returnLocation"></select>
-            </label>
-          </div>
-        </section>
+.px-shell {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  padding: 28px 16px 40px;
+}
 
-        <label class="pa-field">
-          <span id="labelNotes">Notes</span>
-          <textarea id="notes" name="notes" rows="3"></textarea>
-        </label>
+.px-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 18px;
+}
 
-        <button id="submitButton" class="pa-submit" type="submit">Submit reply</button>
-        <p id="formMessage" class="pa-message" role="status"></p>
-      </form>
-    </section>
-  </main>
+.px-kicker {
+  margin: 0 0 6px;
+  color: var(--px-accent-dark);
+  font-size: 0.86rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
 
-  <script src="./src/pre_attendance_config.js"></script>
-  <script src="./src/pre_attendance.js"></script>
-</body>
-</html>
+h1 {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  line-height: 1.05;
+  letter-spacing: 0;
+}
+
+.px-muted {
+  margin: 10px 0 0;
+  color: var(--px-muted);
+}
+
+.px-link,
+button {
+  min-height: 42px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--px-accent);
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+  text-decoration: none;
+  padding: 10px 14px;
+}
+
+.px-link:hover,
+button:hover {
+  background: var(--px-accent-dark);
+}
+
+.px-panel {
+  background: var(--px-panel);
+  border: 1px solid var(--px-line);
+  border-radius: 8px;
+  box-shadow: 0 18px 50px rgba(23, 33, 47, 0.08);
+  padding: 18px;
+}
+
+.px-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: min(280px, 100%);
+  font-weight: 800;
+}
+
+input {
+  min-height: 42px;
+  border: 1px solid var(--px-line);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font: inherit;
+}
+
+input:focus {
+  border-color: var(--px-accent);
+  outline: 3px solid rgba(11, 122, 117, 0.16);
+}
+
+.px-count {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  border: 1px solid var(--px-line);
+  border-radius: 8px;
+  padding: 6px 10px;
+  color: var(--px-muted);
+  font-weight: 800;
+}
+
+.px-status {
+  min-height: 24px;
+  margin: 12px 0;
+  color: var(--px-muted);
+  font-weight: 700;
+}
+
+.px-status.is-error {
+  color: #b3261e;
+}
+
+.px-table-wrap {
+  overflow: auto;
+  border: 1px solid var(--px-line);
+  border-radius: 8px;
+}
+
+table {
+  width: 100%;
+  min-width: 1100px;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  border-bottom: 1px solid var(--px-line);
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  background: #eef3f4;
+  color: #263543;
+  font-size: 0.86rem;
+}
+
+td {
+  color: #263543;
+}
+
+@media (max-width: 720px) {
+  .px-header {
+    flex-direction: column;
+  }
+
+  .px-link,
+  button {
+    width: 100%;
+    text-align: center;
+  }
+}

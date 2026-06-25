@@ -1,81 +1,98 @@
-:root{
-  --lp-bg:#0b0f1a;--lp-card:#fff;--lp-text:#172033;--lp-muted:#5e6b80;--lp-accent:#3bd;--lp-success:#4cd964;
-}
-*{box-sizing:border-box}
-html{min-height:100%;background:var(--lp-bg)}
-body{
-  min-height:100vh;
-  margin:0;
-  padding:0;
-  background-color:var(--lp-bg);
-  background-size:cover;
-  background-position:center center;
-  background-repeat:no-repeat;
-  color:#eef;
-  font-family:Inter,system-ui,Arial;
-  font-size:17px;
-  line-height:1.5;
-}
-.lp-wrap{max-width:840px;margin:0 auto;padding:14px 16px}
-.lp-card{background:var(--lp-card);color:var(--lp-text);border:1px solid rgba(23,32,51,.12);border-radius:16px;padding:14px;margin:12px 0;box-shadow:0 10px 30px rgba(0,0,0,.12)}
-.lp-hero{text-align:center}
-.lp-hero h1{font-size:2rem;line-height:1.2;margin:8px 0}
-.lp-card h2{font-size:1.35rem;line-height:1.25;margin:0 0 10px}
-.lp-card h3{font-size:1.18rem;line-height:1.3;margin:0 0 8px}
-.lp-logo{max-width:180px;max-height:72px;display:block;margin:8px auto}
-.lp-muted{color:var(--lp-muted)}
-.lp-form{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:end}
-.lp-form .lp-field{display:flex;flex-direction:column;gap:6px;margin:0}
-.lp-form .lp-field > span{font-size:.88rem;font-weight:700;color:var(--lp-muted)}
-.lp-form input{width:100%;min-height:46px;font-size:1rem;border:1px solid rgba(23,32,51,.16);border-radius:12px;background:#f8fafc;color:var(--lp-text);padding:10px 12px;outline:none;box-shadow:inset 0 1px 2px rgba(0,0,0,.04)}
-.lp-form input:focus{border-color:var(--lp-accent);background:#fff;box-shadow:0 0 0 3px rgba(51,187,221,.18)}
-.lp-primary{display:inline-block;padding:10px 14px;border-radius:12px;background:var(--lp-accent);color:#fff;border:none;text-decoration:none;cursor:pointer;font-size:1rem;font-weight:700}
-.lp-secondary{display:inline-block;padding:10px 14px;border-radius:12px;background:#f4f7fb;color:var(--lp-text);border:1px solid rgba(23,32,51,.16);text-decoration:none;cursor:pointer;font-size:1rem}
-.lp-link{text-align:center}
-.lp-msg{margin:8px 0}
-#tipBody{white-space:pre-line}
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover" />
+  <title>活動報到 · 現場參加者入口</title>
+  <link rel="stylesheet" href="./landing.css" />
+</head>
+<body>
+  <!-- 背景 Banner（由 landing.js 設定 background-image） -->
+  <div id="banner" class="lp-banner"></div>
 
-.lp-poll-options{display:flex;flex-direction:column;gap:10px;margin:8px 0}
-.lp-poll-opt{display:flex;align-items:center;gap:10px;padding:12px;border:1px solid rgba(23,32,51,.14);border-radius:12px;cursor:pointer;background:#f8fafc}
-.lp-poll-opt input{accent-color:var(--lp-accent)}
-.lp-poll-opt:hover{outline:2px solid rgba(59,221,255,.25)}
+  <main class="lp-wrap">
+    <!-- 活動資訊 / LOGO 區 -->
+    <section class="lp-card lp-hero">
+      <img id="logo" class="lp-logo" alt="logo" />
+      <h1 id="evTitle">活動</h1>
+      <p id="evDateTime" class="lp-muted"></p>
+      <p id="evVenue"></p>
+      <p id="evAddress" class="lp-muted"></p>
+    </section>
 
-.lp-result-bars{display:flex;flex-direction:column;gap:10px;margin-top:8px}
-.lp-bar{position:relative;background:#f4f7fb;border:1px solid rgba(23,32,51,.14);border-radius:12px;overflow:hidden;height:42px}
-.lp-bar .fill{position:absolute;left:0;top:0;height:100%;width:0;transition:width .8s ease}
-.lp-bar .label{position:relative;z-index:2;padding:0 12px;line-height:42px;font-weight:700}
-.lp-bar .pct{position:absolute;right:10px;top:0;line-height:42px;opacity:.9}
-.lp-bar.crown::after{
-  content:"👑"; position:absolute; top:-10px; right:8px; font-size:28px;
-  transform:translateY(-12px) scale(.9);
-  animation:crown-drop .75s ease .2s both;
-}
-@keyframes crown-drop{0%{transform:translateY(-28px) scale(.6);opacity:.0}100%{transform:translateY(-12px) scale(1);opacity:1}}
+    <!-- 到場報到：電話 或 代碼 -->
+    <section class="lp-card" id="transportSection">
+      <h3 id="checkinTitle">到場報到（輸入電話或代號）</h3>
+      <form id="checkinForm" class="lp-form">
+        <label class="lp-field">
+          <span id="checkinLabel">電話 / 代號</span>
+          <!-- 接受電話或代碼（可包含英文字母），驗證交由 landing.js 處理 -->
+          <input
+            id="codeDigits"
+            inputmode="text"
+            placeholder="請輸入你的電話或報到代號"
+            required
+          />
+        </label>
+        <button id="checkinButton" class="lp-primary" type="submit">報到</button>
+      </form>
+      <p id="checkinMsg" class="lp-msg"></p>
 
-.lp-banner{
-  width:100%;
-  aspect-ratio:16/5;
-  background-size:100% auto;
-  background-position:top center;
-  background-repeat:no-repeat;
-  border-radius:12px;
-  margin:0 auto 12px;
-}
-.lp-game-booths{display:grid;gap:10px}
-.lp-booth-head{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
-.lp-booth-head h4{margin:0}
-.lp-booth-video{width:100%;max-height:52vh;background:#000;border-radius:12px;display:none}
-.lp-booth-video.is-active{display:block}
-.lp-booth-manual{display:flex;gap:8px;flex-wrap:wrap}
-.lp-booth-manual input{flex:1 1 240px;min-width:0;padding:10px 12px;border-radius:12px;border:1px solid rgba(23,32,51,.16);background:#fff;color:var(--lp-text)}
-.lp-booth-status-list{display:grid;gap:8px}
-.lp-booth-status-row{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid rgba(23,32,51,.1);padding:8px 0}
-.lp-booth-status-row:last-child{border-bottom:0}
-.lp-booth-participated{color:#38d26b;font-weight:800}
-.lp-booth-not-participated{color:#ff5a67;font-weight:800}
-.lp-live-photo-link{margin-top:8px;text-align:center}
+      <!-- 座位資訊：只有在有枱號 / 座位時才顯示 -->
+      <div id="seatCard" class="lp-card" style="display:none; margin-top:8px">
+        <h4 id="seatTitle">歡迎！你的座位安排</h4>
+        <p id="seatInfo" style="font-weight:700"></p>
+      </div>
 
-@media (max-width:520px){
-  .lp-form{grid-template-columns:1fr}
-  .lp-form .lp-primary{width:100%;text-align:center}
-}
+      <div id="gameBoothPanel" class="lp-card lp-game-booths" style="display:none; margin-top:8px">
+        <div class="lp-booth-head">
+          <h4>遊戲攤位參與紀錄 (Game Booth Participation)</h4>
+          <button id="startBoothScanner" class="lp-primary" type="button">開啟相機掃描 QR (Open camera to scan QR)</button>
+          <button id="signOutBoothSession" class="lp-secondary" type="button">登出測試 (Sign out for testing)</button>
+        </div>
+        <video id="boothScannerVideo" class="lp-booth-video" playsinline muted></video>
+        <div class="lp-booth-manual">
+          <input id="manualBoothCode" placeholder="如相機未能使用，可貼上攤位 QR 連結或代碼 (If camera is unavailable, paste booth QR link or code)">
+          <button id="manualBoothSubmit" class="lp-primary" type="button">提交 (Submit)</button>
+        </div>
+        <div id="boothStatusList" class="lp-booth-status-list"></div>
+      </div>
+      <a id="livePhotoLinkButton" class="lp-primary lp-live-photo-link" href="#" target="_blank" rel="noopener" style="display:none">LIVE PHOTO</a>
+    </section>
+
+    <!-- 活動提示（選填） -->
+    <section class="lp-card">
+      <h3 id="tipTitle">活動提示</h3>
+      <p id="tipBody" class="lp-muted">
+        請根據場內指示入座，如有任何問題，歡迎向現場工作人員查詢。
+      </p>
+    </section>
+
+    <!-- 交通資訊（由 /events/{eid}/info 填充） -->
+    <section class="lp-card" id="howToGetThereSection">
+      <h3 id="transportTitle">交通資訊</h3>
+      <div class="lp-grid-2">
+        <div id="busBlock">
+          <h4 id="busTitle">巴士</h4>
+          <p id="evBus" class="lp-muted"></p>
+        </div>
+        <div id="trainBlock">
+          <h4 id="trainTitle">地鐵 / 火車</h4>
+          <p id="evTrain" class="lp-muted"></p>
+        </div>
+        <div id="parkingBlock">
+          <h4 id="parkingTitle">泊車</h4>
+          <p id="evParking" class="lp-muted"></p>
+        </div>
+      </div>
+      <a id="mapBtn" class="lp-primary lp-link" target="_blank">在地圖打開</a>
+      <p id="evNotes" class="lp-muted" style="margin-top:8px"></p>
+    </section>
+  </main>
+
+  <!-- landing.js：負責讀取 Firebase、顯示 LOGO / Banner / 背景、以及報到邏輯 -->
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+  <script src="./src/landing.js"></script>
+</body>
+</html>

@@ -1,116 +1,103 @@
-import traceback
-import json
-from functools import partial
-from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
-from pathlib import Path
-from urllib import error, parse, request
-
-
-HOST = "127.0.0.1"
-PORT = 8000
-ROOT = Path(__file__).resolve().parent
-LOG_PATH = ROOT / "live-server.log"
-FIREBASE_BASE = "https://jc-annualdinner-default-rtdb.asia-southeast1.firebasedatabase.app"
-
-
-class QuietHandler(SimpleHTTPRequestHandler):
-    def firebase_url(self):
-        parsed = parse.urlparse(self.path)
-        params = parse.parse_qs(parsed.query)
-        raw_path = params.get("path", [""])[0]
-        if not raw_path:
-            return ""
-        if not raw_path.startswith("/"):
-            raw_path = "/" + raw_path
-        return f"{FIREBASE_BASE}{raw_path}.json"
-
-    def proxy_firebase(self):
-        target = self.firebase_url()
-        if not target:
-            self.send_error(400, "Missing Firebase path")
-            return
-
-        length = int(self.headers.get("Content-Length", "0") or "0")
-        body = self.rfile.read(length) if length else None
-        headers = {"Content-Type": "application/json"}
-        req = request.Request(target, data=body, headers=headers, method=self.command)
-        try:
-            with request.urlopen(req, timeout=20) as res:
-                data = res.read()
-                self.send_response(res.status)
-                self.send_header("Content-Type", res.headers.get("Content-Type", "application/json"))
-                self.send_header("Access-Control-Allow-Origin", "*")
-                self.end_headers()
-                self.wfile.write(data)
-        except error.HTTPError as exc:
-            data = exc.read()
-            self.send_response(exc.code)
-            self.send_header("Content-Type", exc.headers.get("Content-Type", "application/json"))
-            self.send_header("Access-Control-Allow-Origin", "*")
-            self.end_headers()
-            self.wfile.write(data)
-        except Exception as exc:
-            payload = json.dumps({"error": str(exc)}).encode("utf-8")
-            self.send_response(502)
-            self.send_header("Content-Type", "application/json")
-            self.send_header("Access-Control-Allow-Origin", "*")
-            self.end_headers()
-            self.wfile.write(payload)
-
-    def do_OPTIONS(self):
-        self.send_response(204)
-        self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, PUT, PATCH, DELETE, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type")
-        self.end_headers()
-
-    def do_GET(self):
-        if self.path.startswith("/__firebase"):
-            self.proxy_firebase()
-            return
-        super().do_GET()
-
-    def do_PUT(self):
-        if self.path.startswith("/__firebase"):
-            self.proxy_firebase()
-            return
-        self.send_error(405)
-
-    def do_PATCH(self):
-        if self.path.startswith("/__firebase"):
-            self.proxy_firebase()
-            return
-        self.send_error(405)
-
-    def do_DELETE(self):
-        if self.path.startswith("/__firebase"):
-            self.proxy_firebase()
-            return
-        self.send_error(405)
-
-    def end_headers(self):
-        self.send_header("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
-        self.send_header("Pragma", "no-cache")
-        self.send_header("Expires", "0")
-        super().end_headers()
-
-    def log_message(self, format, *args):
-        with LOG_PATH.open("a", encoding="utf-8") as log:
-            log.write("%s - %s\n" % (self.log_date_time_string(), format % args))
-
-
-def main():
-    handler = partial(QuietHandler, directory=str(ROOT))
-    server = ThreadingHTTPServer((HOST, PORT), handler)
-    with LOG_PATH.open("a", encoding="utf-8") as log:
-        log.write(f"Serving {ROOT} at http://{HOST}:{PORT}/\n")
-    server.serve_forever()
-
-
-if __name__ == "__main__":
-    try:
-        main()
-    except Exception:
-        with LOG_PATH.open("a", encoding="utf-8") as log:
-            log.write(traceback.format_exc())
-        raise
+Serving C:\Users\user\OneDrive\Galvanic\Galvanic\Eva - Event\Lucky Draw Program\Lucky Draw Program_Jockey Club at http://127.0.0.1:8000/
+26/Jun/2026 01:59:41 - "GET /pre_event_apply.html HTTP/1.1" 200 -
+26/Jun/2026 02:23:01 - "GET /pre_event_apply.html HTTP/1.1" 200 -
+26/Jun/2026 02:23:01 - "GET /pre_event_apply.css HTTP/1.1" 200 -
+26/Jun/2026 02:23:01 - "GET /src/pre_event_apply_config.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:01 - "GET /src/pre_event_apply.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:09 - "GET / HTTP/1.1" 200 -
+26/Jun/2026 02:23:09 - "GET /styles.css HTTP/1.1" 200 -
+26/Jun/2026 02:23:09 - "GET /qrcode.min.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:09 - "GET /src/boot.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:09 - "GET /src/core_firebase.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:09 - "GET /src/admin_overlay.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:09 - "GET /src/fb.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:09 - "GET /src/ui_cms_firebase.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:09 - "GET /src/config.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:09 - "GET /src/reward_rounds_firebase.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:09 - "GET /src/stage_prizes_firebase.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:09 - "GET /src/roster_firebase.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:09 - "GET /src/stage_draw_ui.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:09 - "GET /src/stage_draw_logic.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:09 - "GET /src/events_admin.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:10 - "GET /src/surfaces_public_tablet.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:13 - "GET / HTTP/1.1" 200 -
+26/Jun/2026 02:23:13 - "GET /styles.css HTTP/1.1" 200 -
+26/Jun/2026 02:23:13 - "GET /qrcode.min.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:13 - "GET /src/boot.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:13 - "GET /src/core_firebase.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:13 - "GET /src/admin_overlay.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:13 - "GET /src/fb.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:13 - "GET /src/config.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:13 - "GET /src/ui_cms_firebase.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:13 - "GET /src/stage_prizes_firebase.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:13 - "GET /src/reward_rounds_firebase.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:13 - "GET /src/roster_firebase.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:13 - "GET /src/stage_draw_ui.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:13 - "GET /src/stage_draw_logic.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:13 - "GET /src/events_admin.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:14 - "GET /src/surfaces_public_tablet.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:17 - "GET / HTTP/1.1" 200 -
+26/Jun/2026 02:23:17 - "GET /styles.css HTTP/1.1" 200 -
+26/Jun/2026 02:23:17 - "GET /qrcode.min.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:17 - "GET /src/boot.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:17 - "GET /src/core_firebase.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:17 - "GET /src/admin_overlay.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:17 - "GET /src/fb.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:17 - "GET /src/ui_cms_firebase.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:17 - "GET /src/config.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:17 - "GET /src/roster_firebase.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:17 - "GET /src/reward_rounds_firebase.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:17 - "GET /src/stage_prizes_firebase.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:17 - "GET /src/stage_draw_ui.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:17 - "GET /src/stage_draw_logic.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:17 - "GET /src/events_admin.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:23 - "GET /src/surfaces_public_tablet.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:30 - "GET /pre_event_apply.html?event=empfc1ski HTTP/1.1" 200 -
+26/Jun/2026 02:23:30 - "GET /pre_event_apply.css HTTP/1.1" 200 -
+26/Jun/2026 02:23:30 - "GET /src/pre_event_apply_config.js HTTP/1.1" 200 -
+26/Jun/2026 02:23:30 - "GET /src/pre_event_apply.js HTTP/1.1" 200 -
+26/Jun/2026 02:25:35 - "GET /pre_event_apply.html?event=emqtu4j7m HTTP/1.1" 200 -
+26/Jun/2026 02:25:35 - "GET /pre_event_apply.css HTTP/1.1" 200 -
+26/Jun/2026 02:25:35 - "GET /src/pre_event_apply_config.js HTTP/1.1" 200 -
+26/Jun/2026 02:25:35 - "GET /src/pre_event_apply.js HTTP/1.1" 200 -
+26/Jun/2026 02:29:05 - "GET /pre_event_apply.html HTTP/1.1" 200 -
+26/Jun/2026 02:29:23 - "GET /src/pre_event_apply_config.js HTTP/1.1" 200 -
+26/Jun/2026 02:29:33 - "GET /pre_event_apply.html?event=emqtu4j7m HTTP/1.1" 200 -
+26/Jun/2026 02:29:33 - "GET /pre_event_apply.css HTTP/1.1" 200 -
+26/Jun/2026 02:29:33 - "GET /src/pre_event_apply_config.js HTTP/1.1" 200 -
+26/Jun/2026 02:29:33 - "GET /src/pre_event_apply.js HTTP/1.1" 200 -
+26/Jun/2026 02:30:02 - "GET /pre_event_admin.html?event=emqtu4j7m HTTP/1.1" 200 -
+26/Jun/2026 02:30:02 - "GET /src/pre_event_apply_config.js HTTP/1.1" 200 -
+26/Jun/2026 02:30:02 - "GET /pre_event_apply.css HTTP/1.1" 200 -
+26/Jun/2026 02:30:02 - "GET /src/pre_event_admin.js HTTP/1.1" 200 -
+26/Jun/2026 02:31:15 - "GET /pre_event_apply.html?event=emqtu4j7m HTTP/1.1" 200 -
+26/Jun/2026 02:31:15 - "GET /pre_event_apply.css HTTP/1.1" 200 -
+26/Jun/2026 02:31:15 - "GET /src/pre_event_apply.js HTTP/1.1" 200 -
+26/Jun/2026 02:31:15 - "GET /src/pre_event_apply_config.js HTTP/1.1" 200 -
+26/Jun/2026 02:32:07 - "GET /pre_event_apply.html?event=emqtu4j7m HTTP/1.1" 200 -
+26/Jun/2026 02:32:07 - "GET /pre_event_apply.css HTTP/1.1" 200 -
+26/Jun/2026 02:32:07 - "GET /src/pre_event_apply_config.js HTTP/1.1" 200 -
+26/Jun/2026 02:32:07 - "GET /src/pre_event_apply.js HTTP/1.1" 200 -
+26/Jun/2026 02:34:07 - "GET /pre_event_apply.html HTTP/1.1" 200 -
+26/Jun/2026 02:34:35 - "GET /src/pre_event_apply.js HTTP/1.1" 200 -
+26/Jun/2026 02:34:48 - "GET /pre_event_apply.html?event=emqtu4j7m HTTP/1.1" 200 -
+26/Jun/2026 02:34:48 - "GET /pre_event_apply.css HTTP/1.1" 200 -
+26/Jun/2026 02:34:48 - "GET /src/pre_event_apply_config.js HTTP/1.1" 200 -
+26/Jun/2026 02:34:48 - "GET /src/pre_event_apply.js HTTP/1.1" 200 -
+26/Jun/2026 02:35:17 - "GET /pre_event_apply.html?event=emqtu4j7m HTTP/1.1" 200 -
+26/Jun/2026 02:35:17 - "GET /pre_event_apply.css HTTP/1.1" 200 -
+26/Jun/2026 02:35:17 - "GET /src/pre_event_apply_config.js HTTP/1.1" 200 -
+26/Jun/2026 02:35:17 - "GET /src/pre_event_apply.js HTTP/1.1" 200 -
+26/Jun/2026 02:35:27 - "GET /pre_event_apply.html?event=emqtu4j7m HTTP/1.1" 200 -
+26/Jun/2026 02:35:27 - "GET /pre_event_apply.css HTTP/1.1" 200 -
+26/Jun/2026 02:35:27 - "GET /src/pre_event_apply_config.js HTTP/1.1" 200 -
+26/Jun/2026 02:35:27 - "GET /src/pre_event_apply.js HTTP/1.1" 200 -
+26/Jun/2026 02:37:21 - "GET /src/pre_event_apply.js HTTP/1.1" 200 -
+26/Jun/2026 02:37:35 - "GET /pre_event_apply.html?event=emqtu4j7m HTTP/1.1" 200 -
+26/Jun/2026 02:37:35 - "GET /pre_event_apply.css HTTP/1.1" 200 -
+26/Jun/2026 02:37:35 - "GET /src/pre_event_apply_config.js HTTP/1.1" 200 -
+26/Jun/2026 02:37:35 - "GET /src/pre_event_apply.js HTTP/1.1" 200 -
+26/Jun/2026 02:38:47 - "GET /pre_event_apply.html?event=emqtu4j7m HTTP/1.1" 200 -
+26/Jun/2026 02:38:47 - "GET /pre_event_apply.css HTTP/1.1" 200 -
+26/Jun/2026 02:38:47 - "GET /src/pre_event_apply_config.js HTTP/1.1" 200 -
+26/Jun/2026 02:38:47 - "GET /src/pre_event_apply.js HTTP/1.1" 200 -
