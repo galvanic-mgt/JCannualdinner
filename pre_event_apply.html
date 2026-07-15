@@ -18,12 +18,11 @@
 
     <section id="loginPanel" class="pe-panel">
       <h2>登入<br><span class="pe-en">Login</span></h2>
-      <p class="pe-muted">請輸入員工證編號以查看或更改你的選擇。<br>Enter your Badge Card Number to review or update your choices.
-</p>
+      <p class="pe-muted">請輸入員工編號以查看或更改你的選擇。<br>Enter your badge number to review or update your choices.</p>
       <form id="loginForm" class="pe-form">
         <label class="pe-field">
-          <span>員工證編號<br><span class="pe-en">Badge Card Number</span></span>
-          <input id="batchInput" autocomplete="off" required />
+          <span>員工編號<br><span class="pe-en">Badge Number</span></span>
+          <input id="batchInput" autocomplete="username" required />
         </label>
         <button class="pe-primary" type="submit">繼續<br><span class="pe-en">Continue</span></button>
       </form>
@@ -58,11 +57,11 @@
 
           <section id="shuttleFields" class="pe-step pe-shuttle pe-collapsible is-collapsed" aria-hidden="true">
             <label class="pe-field">
-              <span>出發地點及時間<br><span class="pe-en">Pickup point and departure time</span></span>
+              <span>到場選擇<br><span class="pe-en">Arrival selection</span></span>
               <select id="pickupLocation"></select>
             </label>
             <label class="pe-field">
-              <span>回程地點及開車時間<br><span class="pe-en">Return point and departure time</span></span>
+              <span>離場選擇<br><span class="pe-en">Departure</span></span>
               <select id="returnLocation"></select>
             </label>
             <select id="goTime" class="pe-visually-hidden" tabindex="-1" aria-hidden="true"></select>
@@ -75,6 +74,7 @@
               <select id="meal" required></select>
             </label>
           </section>
+
         </div>
 
         <label class="pe-field">
@@ -95,6 +95,6 @@
   </main>
 
   <script src="./src/pre_event_apply_config.js"></script>
-  <script src="./src/pre_event_apply.js"></script>
+  <script src="./src/pre_event_apply.js?v=20260715c"></script>
 </body>
 </html>

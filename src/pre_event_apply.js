@@ -9,8 +9,8 @@ let currentApplication = null;
 const TEXT = {
   defaultTitle: "活動前登記\nPre-event Application",
   guest: "嘉賓\nGuest",
-  checkingBatch: "正在核對員工證編號...\nChecking staff ID...",
-  batchNotFound: "找不到此員工證編號，請檢查後再試。\nStaff ID not found. Please check and try again.",
+  checkingBatch: "正在核對員工編號...\nChecking badge number...",
+  batchNotFound: "找不到此員工編號，請檢查後再試。\nBadge number not found. Please check and try again.",
   loadingError: "未能載入活動資料，請稍後再試。\nCould not load this event. Please try again later.",
   lockedNotice: "報名截止日期已過，選擇已鎖定；特殊更改請由指定活動人員人工處理。\nApplication deadline has passed. Choices are locked; special changes must be handled manually by the event team.",
   editUntil: "你可於以下時間前更改選擇：\nYou may edit choices until:",
@@ -29,10 +29,9 @@ const TEXT = {
   pickupTime: "出發時間\nDeparture time",
   pickupPoint: "出發地點\nPickup point",
   returnPoint: "回程地點\nReturn point",
-  returnTime: "回程開車時間\nOutbound departure time",
+  returnTime: "回程時間\nReturn time",
   meal: "餐飲\nMeal",
-  tableSeat: "台號 座位\nTable Seat",
-  luckyDraw: "抽獎結果\nLucky draw result"
+  tableSeat: "台號 座位\nTable Seat"
 };
 
 function $(id) {
@@ -124,21 +123,7 @@ function normaliseTransportValue(value) {
     flight: "airport_express",
     mtr: "self_arrangement"
   };
-  const normalised = aliases[value] || value || "";
-  const options = Array.isArray(PRE_EVENT_CONFIG.transportOptions) ? PRE_EVENT_CONFIG.transportOptions : [];
-  if (options.some(item => item.value === normalised)) return normalised;
-  return options[0]?.value || "shuttle_bus";
-}
-
-function normaliseMealValue(value) {
-  const aliases = {
-    non_vegetarian: "regular_menu",
-    vegetarian: "vegetarian_menu"
-  };
-  const normalised = aliases[value] || value || "";
-  const options = Array.isArray(PRE_EVENT_CONFIG.mealOptions) ? PRE_EVENT_CONFIG.mealOptions : [];
-  if (options.some(item => item.value === normalised)) return normalised;
-  return options[0]?.value || "regular_menu";
+  return aliases[value] || value || "self_arrangement";
 }
 
 function fillSelect(id, items) {
@@ -162,7 +147,9 @@ function setCollapsed(el, collapsed) {
 function syncShuttleTimes() {
   const pickup = optionItem(PRE_EVENT_CONFIG.pickupLocationOptions, $("pickupLocation")?.value);
   const returnPoint = optionItem(PRE_EVENT_CONFIG.returnLocationOptions, $("returnLocation")?.value);
-  const returnTime = returnPoint?.time || PRE_EVENT_CONFIG.fixedReturnTime || $("returnTime")?.value || "23:00";
+  const returnTime = returnPoint
+    ? (returnPoint.time || "")
+    : (PRE_EVENT_CONFIG.fixedReturnTime || $("returnTime")?.value || "");
   if ($("goTime")) $("goTime").value = pickup?.time || "";
   if ($("returnTime")) $("returnTime").value = returnTime;
 }
@@ -231,21 +218,40 @@ async function findGuest(eid, rawBatch) {
   const people = await dbGet(`/events/${eid}/people`);
   const list = Array.isArray(people) ? people : [];
   const inputText = normalise(rawBatch);
-  const inputDigits = normaliseDigits(rawBatch);
 
   for (let i = 0; i < list.length; i += 1) {
     const p = list[i] || {};
     const codeMatch = inputText && normalise(p.code) === inputText;
-    const phoneMatch = inputDigits && normaliseDigits(p.phone) === inputDigits;
-    if (codeMatch || phoneMatch) return { guest: p, index: i };
+    if (codeMatch) return { guest: p, index: i };
+  }
+
+  const importedKey = safeKey(rawBatch);
+  if (importedKey) {
+    const imported = await dbGet(`/events/${eid}/preEventApplications/${importedKey}`).catch(() => null);
+    const codeMatch = imported?.code && inputText && normalise(imported.code) === inputText;
+    if (imported && codeMatch) {
+      return {
+        guest: {
+          name: imported.name || "",
+          code: imported.code || "",
+          phone: imported.phone || "",
+          dept: imported.dept || "",
+          preEvent: imported
+        },
+        index: -1,
+        application: imported
+      };
+    }
   }
   return { guest: null, index: -1 };
 }
 
 async function loadApplication(eid, guest) {
-  const key = safeKey(guest.code || guest.phone || guest.name);
-  const app = await dbGet(`/events/${eid}/preEventApplications/${key}`).catch(() => null);
-  if (app) return app;
+  const keys = [...new Set([guest.code, guest.phone, guest.name].map(safeKey).filter(Boolean))];
+  for (const key of keys) {
+    const app = await dbGet(`/events/${eid}/preEventApplications/${key}`).catch(() => null);
+    if (app) return app;
+  }
 
   const rawFallback = await dbGet(`/events/${eid}/preAttendance`).catch(() => null);
   const fallbackRows = Object.entries(rawFallback || {})
@@ -275,7 +281,7 @@ function applyApplicationToForm(app) {
   $("pickupLocation").value = app.pickupLocation || "";
   $("returnTime").value = app.returnTime || "";
   $("returnLocation").value = app.returnLocation || "";
-  $("meal").value = normaliseMealValue(app.meal);
+  $("meal").value = app.meal || "non_vegetarian";
   $("remarks").value = app.remarks || "";
   syncShuttleTimes();
   updateChoiceVisibility();
@@ -323,9 +329,11 @@ function buildApplicationPayload() {
     transport,
     transportLabel: attending ? optionLabel(PRE_EVENT_CONFIG.transportOptions, transport) : "",
     goTime: shuttleSelected ? pickup?.time || $("goTime").value : "",
+    goTimeLabel: shuttleSelected ? optionLabel(PRE_EVENT_CONFIG.goTimeOptions, pickup?.time || $("goTime").value) : "",
     pickupLocation: shuttleSelected ? $("pickupLocation").value : "",
     pickupLocationLabel: shuttleSelected ? optionLabel(PRE_EVENT_CONFIG.pickupLocationOptions, $("pickupLocation").value) : "",
     returnTime: shuttleSelected ? returnTime : "",
+    returnTimeLabel: shuttleSelected ? optionLabel(PRE_EVENT_CONFIG.returnTimeOptions, returnTime) : "",
     returnLocation: shuttleSelected ? $("returnLocation").value : "",
     returnLocationLabel: shuttleSelected ? optionLabel(PRE_EVENT_CONFIG.returnLocationOptions, $("returnLocation").value) : "",
     meal: attending ? $("meal").value : "",
@@ -353,10 +361,10 @@ function renderDetails(app, guest, canReveal) {
   const rows = [
     [TEXT.attendance, app.attending === false ? TEXT.notAttending : TEXT.attending],
     [TEXT.transport, final.transportLabel || app.transportLabel || app.transport || ""],
-    [TEXT.pickupTime, final.pickupTime || final.goTime || app.goTime || ""],
+    [TEXT.pickupTime, final.pickupTime || final.goTime || app.goTimeLabel || app.goTime || ""],
     [TEXT.pickupPoint, final.pickupLocation || app.pickupLocationLabel || app.pickupLocation || ""],
-    [TEXT.returnTime, final.returnTime || app.returnTime || ""],
     [TEXT.returnPoint, final.returnLocation || app.returnLocationLabel || app.returnLocation || ""],
+    [TEXT.returnTime, final.returnTime || app.returnTimeLabel || app.returnTime || ""],
     [TEXT.meal, final.mealLabel || app.mealLabel || app.meal || ""],
     [TEXT.tableSeat, [final.table || guest.table, final.seat || guest.seat].filter(Boolean).join("  ")]
   ];
@@ -367,7 +375,7 @@ function renderDetails(app, guest, canReveal) {
 
 async function showGuest(rawBatch) {
   setMessage("loginMessage", TEXT.checkingBatch, false);
-  const { guest, index } = await findGuest(currentEventId, rawBatch);
+  const { guest, index, application } = await findGuest(currentEventId, rawBatch);
   if (!guest) {
     setMessage("loginMessage", TEXT.batchNotFound, true);
     return;
@@ -375,7 +383,7 @@ async function showGuest(rawBatch) {
 
   currentGuest = guest;
   currentGuestIndex = index;
-  currentApplication = await loadApplication(currentEventId, guest);
+  currentApplication = application || await loadApplication(currentEventId, guest);
 
   const settings = await loadEventSettings(currentEventId);
   const { info, meta } = await loadEventHeader(currentEventId);
@@ -384,20 +392,9 @@ async function showGuest(rawBatch) {
   const canReveal = detailsRevealOpen(settings, parseDate(info?.dateTime || meta?.dateTime));
 
   setMultilineText($("guestName"), guest.name || TEXT.guest);
-  $("guestInfo").textContent = [guest.dept, guest.code, guest.phone].filter(Boolean).join(" | ");
+  $("guestInfo").textContent = [guest.dept, guest.code].filter(Boolean).join(" | ");
   $("loginPanel").hidden = true;
-  renderDetails(currentApplication, guest, canReveal);
-
-  if (canReveal) {
-    $("applicationPanel").hidden = true;
-    $("lockNotice").hidden = true;
-    $("lockNotice").textContent = "";
-    setMessage("loginMessage", "", false);
-    return;
-  }
-
   $("applicationPanel").hidden = false;
-  $("lockNotice").hidden = false;
   $("lockNotice").textContent = locked
     ? TEXT.lockedNotice
     : deadline
@@ -407,6 +404,7 @@ async function showGuest(rawBatch) {
 
   applyApplicationToForm(currentApplication);
   setFormDisabled(Boolean(locked));
+  renderDetails(currentApplication, guest, canReveal);
   setMessage("loginMessage", "", false);
 }
 
@@ -431,10 +429,12 @@ async function saveApplication() {
       primarySaveError: primaryError?.message || String(primaryError)
     });
   }
-  try {
-    await dbPatch(`/events/${currentEventId}/people/${currentGuestIndex}`, { preEvent: payload });
-  } catch (error) {
-    console.warn("[pre-event] application saved, roster mirror skipped", error);
+  if (currentGuestIndex >= 0) {
+    try {
+      await dbPatch(`/events/${currentEventId}/people/${currentGuestIndex}`, { preEvent: payload });
+    } catch (error) {
+      console.warn("[pre-event] application saved, roster mirror skipped", error);
+    }
   }
   currentApplication = payload;
   setMessage("formMessage", TEXT.saved, false);
