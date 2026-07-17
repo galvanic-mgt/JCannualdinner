@@ -1480,7 +1480,10 @@ function bindRoster(){
       checkedIn: !!checkedIn,
       prize: ''
     });
-    await setPeopleWithSync(eid, people, { syncVoterLookup: true });
+    // Keep manual roster additions available while voterLookup remains protected.
+    // The new person's voting identity can be synchronized after Firebase Auth
+    // is enabled; roster, table, seat, check-in, and lucky-draw data save now.
+    await setPeopleWithSync(eid, people);
     rosterState.page = 1;
     await renderRoster();
   });
