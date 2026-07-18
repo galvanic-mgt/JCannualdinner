@@ -16,7 +16,7 @@ This project is currently a browser-only static app that talks directly to Fireb
 3. Lock Realtime Database rules so admin writes require an authenticated user.
 4. Keep public pages on narrow, purpose-specific paths. Do not expose the full `people` roster to public pages.
 5. Move sensitive lookups, such as check-in by phone number, behind a Cloud Function so the browser never downloads the full roster.
-6. Remove or rotate the default `administrator / administrator` account immediately.
+6. Remove or rotate the default administrator account immediately.
 
 ## Example Realtime Database rules
 
@@ -121,4 +121,3 @@ Instead of public pages reading `/events/{eventId}/people`, create public-only d
 ```
 
 Admin code can write a sanitized copy there, while private roster data stays under `/events/{eventId}/people`.
-

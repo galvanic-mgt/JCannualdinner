@@ -461,10 +461,10 @@ const personKey = (p)=>{
 const ROLE_MASTER = 'master';
 const ROLE_ROSTER = 'roster';
 const ACTIVE_KEY = 'cms-active-user';
-const SESSION_KEY = 'cms-session-ok';
+const SESSION_KEY = 'cms-session-ok-v2';
 let usersCache = [];
-const DEFAULT_USER = { id:'u-master', name:'Admin', role:ROLE_MASTER, username:'administrator', password:'administrator', events:[] };
-const CMS_LOGIN_DISABLED_FOR_TESTING = true;
+const DEFAULT_USER = { id:'u-master', name:'Admin', role:ROLE_MASTER, username:'administrator', password:'mce0716', events:[] };
+const CMS_LOGIN_DISABLED_FOR_TESTING = false;
 
 function normalizeUser(u = {}){
   const events = Array.isArray(u.events) ? u.events : [];
@@ -602,7 +602,7 @@ function renderUsersUI(){
   tbody.innerHTML = '';
   if (!users.length) {
     const tr = document.createElement('tr');
-    tr.innerHTML = '<td colspan="4" class="muted">尚未建立使用者，請使用預設帳號登入：administrator / administrator</td>';
+    tr.innerHTML = '<td colspan="4" class="muted">尚未建立使用者，請使用管理員帳號登入。</td>';
     tbody.appendChild(tr);
   }
   users.forEach(u=>{
