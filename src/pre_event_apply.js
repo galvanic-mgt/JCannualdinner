@@ -289,17 +289,14 @@ function applyApplicationToForm(app) {
 
 function updateChoiceVisibility() {
   const attending = document.querySelector('input[name="attending"]:checked')?.value !== "no";
-  const shuttleSelected = $("transport")?.value === "shuttle_bus";
   syncShuttleTimes();
   setCollapsed($("choiceFields"), !attending);
-  setCollapsed($("shuttleFields"), !attending || !shuttleSelected);
-  ["transport", "meal"].forEach(id => {
-    const el = $(id);
-    if (el) el.required = attending;
-  });
+  setCollapsed($("shuttleFields"), true);
+  if ($("transport")) $("transport").required = false;
+  if ($("meal")) $("meal").required = attending;
   ["pickupLocation", "returnLocation"].forEach(id => {
     const el = $(id);
-    if (el) el.required = attending && shuttleSelected;
+    if (el) el.required = false;
   });
   ["goTime", "returnTime"].forEach(id => {
     const el = $(id);
