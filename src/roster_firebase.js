@@ -1,6 +1,6 @@
 import { getCurrentEventId, getPeople, getEventInfo, getPrizes } from './core_firebase.js';
 import { FB } from './fb.js';
-import { writePeopleWithVoterLookup } from './voter_lookup.js?v=20260712f';
+import { writePeopleWithVoterLookup } from './voter_lookup.js?v=20260724a';
 
 export function normalizeName(s){ return (s || '').trim().replace(/\s+/g,' '); }
 
@@ -56,7 +56,7 @@ export async function importCSV(text){
   const lines = String(text).split(/\r?\n/).filter(l => l.trim().length);
   if(lines.length === 0) return [];
 
-  const header = splitCSVLine(lines[0]);
+  const header = splitCSVLine(lines[0].replace(/^\uFEFF/, ''));
   const idx = mapHeaderIndex(header, info);
 
   const people = lines.slice(1).map(line => {
