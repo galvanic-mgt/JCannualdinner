@@ -360,11 +360,6 @@ function renderDetails(app, guest, canReveal) {
   const final = app.finalArrangement || {};
   const rows = [
     [TEXT.attendance, app.attending === false ? TEXT.notAttending : TEXT.attending],
-    [TEXT.transport, final.transportLabel || app.transportLabel || app.transport || ""],
-    [TEXT.pickupTime, final.pickupTime || final.goTime || app.goTimeLabel || app.goTime || ""],
-    [TEXT.pickupPoint, final.pickupLocation || app.pickupLocationLabel || app.pickupLocation || ""],
-    [TEXT.returnPoint, final.returnLocation || app.returnLocationLabel || app.returnLocation || ""],
-    [TEXT.returnTime, final.returnTime || app.returnTimeLabel || app.returnTime || ""],
     [TEXT.meal, final.mealLabel || app.mealLabel || app.meal || ""],
     [TEXT.tableSeat, [final.table || guest.table, final.seat || guest.seat].filter(Boolean).join("  ")]
   ];
