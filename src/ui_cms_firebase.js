@@ -3,7 +3,7 @@ import { listEvents, createEvent, setCurrentEventId, getCurrentEventId, getEvent
          getQuestions, setQuestions, getAssets, setAssets, getPolls, setPoll, upsertEventMeta } from './core_firebase.js';
 import { addPrize, removePrize, setCurrentPrize, handlePrizeImportCSV, clearAllPrizes, updatePrize } from './stage_prizes_firebase.js';
 import { getRewardRounds, getRewardRoundState, ensureSecondPrizeRound, addRewardRound, addRewardRoundPrize, setCurrentRewardSelection, setCurrentRewardOnStage, drawRewardRoundPrize, updateRewardRound } from './reward_rounds_firebase.js';
-import { handleImportCSV, exportCSV } from './roster_firebase.js?v=20260724a';
+import { handleImportCSV, exportCSV } from './roster_firebase.js?v=20260731b';
 import { renderStageDraw, stopStageDraw } from './stage_draw_ui.js?v=20260711c';
 import { FB } from './fb.js';
 import { voteCountsFromPoll } from './polls_public_firebase.js?v=20260712f';
