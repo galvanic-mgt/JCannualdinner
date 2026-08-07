@@ -261,6 +261,7 @@ function renderPollStage(machine, state) {
   const revealStep = Math.max(0, Math.min(items.length, Number(state.revealStep || 0)));
   machine.classList.add('v2-poll-machine');
   machine.classList.toggle('v2-poll-results-list', display !== 'qr');
+  machine.classList.toggle('v2-poll-qr-mode', display === 'qr');
   const pollMachineKey = JSON.stringify({
     pollId: state.pollId || '',
     display,
@@ -353,7 +354,7 @@ export function renderV2Stage(state = {}) {
     }
   }
   if (!machine) return;
-  machine.classList.remove('v2-poll-machine', 'v2-poll-results-list');
+  machine.classList.remove('v2-poll-machine', 'v2-poll-results-list', 'v2-poll-qr-mode');
 
   if (state.mode === 'poll' || state.kind === 'poll') {
     lastMachineKey = '';

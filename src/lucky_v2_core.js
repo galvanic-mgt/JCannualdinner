@@ -84,13 +84,8 @@ function normalizeBatch(entry = {}) {
     roundName: entry.roundName || '',
     prizeId: entry.prizeId || '',
     prizeName: entry.prizeName || '',
-    batchSize: Number(entry.batchSize || 0),
     winners: Array.isArray(entry.winners) ? entry.winners : [],
-    action: entry.action || 'draw',
-    replacesBatchId: entry.replacesBatchId || '',
-    replacedIndex: Number.isInteger(entry.replacedIndex) ? entry.replacedIndex : null,
     undone: entry.undone === true,
-    undoneAt: Number(entry.undoneAt || 0),
     supersededBy: entry.supersededBy || '',
     createdAt: Number(entry.createdAt || 0)
   };
@@ -196,29 +191,25 @@ export async function loadV2Context(eid, options = {}) {
   };
 }
 
-export function allBatches(v2 = {}) {
-  const undoTimes = new Map();
-  objectValues(v2?.auditLog).forEach(entry => {
-    if (entry?.action !== 'undo' || !entry?.drawId) return;
-    const time = Number(entry.time || 0);
-    if (time > Number(undoTimes.get(entry.drawId) || 0)) undoTimes.set(entry.drawId, time);
-  });
+export function activeBatches(v2 = {}) {
+  const main = objectValues(v2?.main?.batches).map(normalizeBatch);
+  const reward = objectValues(v2?.rewardRounds).flatMap(round =>
+    objectValues(round?.batches).map(normalizeBatch)
+  );
+  return main.concat(reward)
+    .filter(b => b.id && !b.undone && !b.supersededBy)
+    .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+}
+
+export function recentBatches(v2 = {}, limit = 8) {
   const main = objectValues(v2?.main?.batches).map(normalizeBatch);
   const reward = objectValues(v2?.rewardRounds).flatMap(round =>
     objectValues(round?.batches).map(normalizeBatch)
   );
   return main.concat(reward)
     .filter(b => b.id)
-    .map(b => (b.undone && !b.undoneAt ? { ...b, undoneAt: undoTimes.get(b.id) || 0 } : b))
-    .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-}
-
-export function activeBatches(v2 = {}) {
-  return allBatches(v2).filter(b => !b.undone && !b.supersededBy);
-}
-
-export function recentBatches(v2 = {}, limit = 8) {
-  return allBatches(v2).slice(0, limit);
+    .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
+    .slice(0, limit);
 }
 
 function activeWinnerCountForPrize(v2, prizeId, mode, roundId) {
@@ -583,11 +574,9 @@ export async function undoLastV2(eid) {
   const keyPath = batch.mode === 'extra'
     ? `rewardRounds/${batch.roundId}/winnerKeys`
     : 'main/winnerKeys';
-  const now = Date.now();
   patch[batchPath] = true;
-  patch[batchPath.replace(/\/undone$/, '/undoneAt')] = now;
   applyIndexPatch(patch, keyPath, batch.winners || [], null);
-  patch[`auditLog/${makeId('audit')}`] = { action: 'undo', drawId: batch.id, time: now };
+  patch[`auditLog/${makeId('audit')}`] = { action: 'undo', drawId: batch.id, time: Date.now() };
   patch['ui/lastBatchId'] = null;
   await withFirebaseTimeout(FB.patch(v2Root(eid), patch), `undo write ${v2Root(eid)}`);
   const stageState = await publishStage(eid, {
@@ -640,31 +629,10 @@ export async function loadV2Assets(eid) {
 }
 
 export function csvForBatches(batches) {
-  const rows = [[
-    'Status',
-    'Action',
-    'Mode',
-    'Round',
-    'Prize',
-    'Name',
-    'Department',
-    'Phone',
-    'Code',
-    'Winner Time',
-    'Batch Created Time',
-    'Undo Time',
-    'Batch ID',
-    'Replaces Batch ID',
-    'Superseded By'
-  ]];
+  const rows = [['Mode', 'Round', 'Prize', 'Name', 'Department', 'Phone', 'Code', 'Time', 'Batch ID']];
   (batches || []).forEach(batch => {
-    const status = batch.undone ? 'Undone' : (batch.supersededBy ? 'Replaced' : 'Active');
-    const batchTime = batch.createdAt ? new Date(batch.createdAt).toLocaleString() : '';
-    const undoTime = batch.undoneAt ? new Date(batch.undoneAt).toLocaleString() : '';
     (batch.winners || []).forEach(w => {
       rows.push([
-        status,
-        batch.action || 'draw',
         batch.mode || '',
         batch.roundName || '',
         batch.prizeName || '',
@@ -673,11 +641,7 @@ export function csvForBatches(batches) {
         w.phone || '',
         w.code || '',
         w.time ? new Date(w.time).toLocaleString() : '',
-        batchTime,
-        undoTime,
-        batch.id || '',
-        batch.replacesBatchId || '',
-        batch.supersededBy || ''
+        batch.id || ''
       ]);
     });
   });

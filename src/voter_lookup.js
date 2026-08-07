@@ -84,19 +84,11 @@ export async function writePeopleWithVoterLookup(eid, people = []) {
   if (!eid) throw new Error('Missing event ID');
   const list = Array.isArray(people) ? people : [];
   const lookup = buildVoterLookup(list);
-  try {
-    return await FB.patch(`/events/${eid}`, {
-      people: list,
-      voterLookup: Object.keys(lookup).length ? lookup : null,
-      voterLookupMeta: lookupMeta(list, lookup)
-    });
-  } catch (error) {
-    // Some deployments allow roster writes but protect voterLookup. Keep roster
-    // management working there; the lookup can be rebuilt once access is enabled.
-    await FB.put(`/events/${eid}/people`, list);
-    console.warn('[roster] voter lookup sync skipped', error);
-    return list;
-  }
+  return await FB.patch(`/events/${eid}`, {
+    people: list,
+    voterLookup: Object.keys(lookup).length ? lookup : null,
+    voterLookupMeta: lookupMeta(list, lookup)
+  });
 }
 
 export async function rebuildVoterLookup(eid) {

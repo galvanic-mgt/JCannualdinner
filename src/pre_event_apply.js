@@ -289,14 +289,17 @@ function applyApplicationToForm(app) {
 
 function updateChoiceVisibility() {
   const attending = document.querySelector('input[name="attending"]:checked')?.value !== "no";
+  const shuttleSelected = $("transport")?.value === "shuttle_bus";
   syncShuttleTimes();
   setCollapsed($("choiceFields"), !attending);
-  setCollapsed($("shuttleFields"), true);
-  if ($("transport")) $("transport").required = false;
-  if ($("meal")) $("meal").required = attending;
+  setCollapsed($("shuttleFields"), !attending || !shuttleSelected);
+  ["transport", "meal"].forEach(id => {
+    const el = $(id);
+    if (el) el.required = attending;
+  });
   ["pickupLocation", "returnLocation"].forEach(id => {
     const el = $(id);
-    if (el) el.required = false;
+    if (el) el.required = attending && shuttleSelected;
   });
   ["goTime", "returnTime"].forEach(id => {
     const el = $(id);
@@ -357,6 +360,11 @@ function renderDetails(app, guest, canReveal) {
   const final = app.finalArrangement || {};
   const rows = [
     [TEXT.attendance, app.attending === false ? TEXT.notAttending : TEXT.attending],
+    [TEXT.transport, final.transportLabel || app.transportLabel || app.transport || ""],
+    [TEXT.pickupTime, final.pickupTime || final.goTime || app.goTimeLabel || app.goTime || ""],
+    [TEXT.pickupPoint, final.pickupLocation || app.pickupLocationLabel || app.pickupLocation || ""],
+    [TEXT.returnPoint, final.returnLocation || app.returnLocationLabel || app.returnLocation || ""],
+    [TEXT.returnTime, final.returnTime || app.returnTimeLabel || app.returnTime || ""],
     [TEXT.meal, final.mealLabel || app.mealLabel || app.meal || ""],
     [TEXT.tableSeat, [final.table || guest.table, final.seat || guest.seat].filter(Boolean).join("  ")]
   ];

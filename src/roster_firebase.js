@@ -1,6 +1,6 @@
 import { getCurrentEventId, getPeople, getEventInfo, getPrizes } from './core_firebase.js';
 import { FB } from './fb.js';
-import { writePeopleWithVoterLookup } from './voter_lookup.js?v=20260724a';
+import { writePeopleWithVoterLookup } from './voter_lookup.js?v=20260712f';
 
 export function normalizeName(s){ return (s || '').trim().replace(/\s+/g,' '); }
 
@@ -56,7 +56,7 @@ export async function importCSV(text){
   const lines = String(text).split(/\r?\n/).filter(l => l.trim().length);
   if(lines.length === 0) return [];
 
-  const header = splitCSVLine(lines[0].replace(/^\uFEFF/, ''));
+  const header = splitCSVLine(lines[0]);
   const idx = mapHeaderIndex(header, info);
 
   const people = lines.slice(1).map(line => {
@@ -104,76 +104,13 @@ function formatHongKongDateTime(value, fallbackText = ''){
   }).format(date);
 }
 
-function luckyV2PersonKeys(person = {}) {
-  const phone = String(person.phone || '').trim();
-  const phoneDigits = phone.replace(/\D/g, '');
-  const code = String(person.code || person.staffId || '').trim();
-  const name = String(person.name || '').trim().replace(/\s+/g, ' ');
-  const dept = String(person.dept || person.department || '').trim().replace(/\s+/g, ' ');
-  const keys = new Set();
-  if (phone) keys.add(`phone:${phone}`);
-  if (phoneDigits) keys.add(`phone-digits:${phoneDigits}`);
-  if (code) {
-    keys.add(`code:${code}`);
-    keys.add(`code-normalized:${code.toLowerCase()}`);
-  }
-  if (name || dept) {
-    keys.add(`name:${name}||${dept}`);
-    keys.add(`name-normalized:${name.toLowerCase()}||${dept.toLowerCase()}`);
-  }
-  return keys;
-}
-
-function addLuckyV2Gift(map, winner, gift) {
-  if (!winner || !gift) return;
-  const keys = luckyV2PersonKeys(winner);
-  if (winner.key) keys.add(String(winner.key));
-  keys.forEach(key => {
-    if (!map.has(key)) map.set(key, []);
-    const gifts = map.get(key);
-    if (!gifts.includes(gift)) gifts.push(gift);
-  });
-}
-
-export function collectLuckyV2GiftMaps(v2 = {}) {
-  const main = new Map();
-  const second = new Map();
-  const addBatch = (batch, fallbackMode) => {
-    if (!batch || batch.undone === true || batch.supersededBy) return;
-    const prizeName = String(batch.prizeName || '').trim();
-    if (!prizeName) return;
-    const mode = batch.mode === 'extra' || fallbackMode === 'extra' ? 'extra' : 'main';
-    const roundName = String(batch.roundName || '').trim();
-    const gift = mode === 'extra' && roundName ? `${roundName}: ${prizeName}` : prizeName;
-    const target = mode === 'extra' ? second : main;
-    (Array.isArray(batch.winners) ? batch.winners : []).forEach(winner => {
-      addLuckyV2Gift(target, winner, gift);
-    });
-  };
-
-  Object.values(v2?.main?.batches || {}).forEach(batch => addBatch(batch, 'main'));
-  Object.values(v2?.rewardRounds || {}).forEach(round => {
-    Object.values(round?.batches || {}).forEach(batch => addBatch(batch, 'extra'));
-  });
-  return { main, second };
-}
-
-export function luckyV2GiftsForPerson(person, map) {
-  const gifts = new Set();
-  luckyV2PersonKeys(person).forEach(key => {
-    (map?.get(key) || []).forEach(gift => gifts.add(gift));
-  });
-  return Array.from(gifts);
-}
-
 export async function exportCSV(){
   const eid = getCurrentEventId();
-  const [info, people, prizes, rewardRounds, luckyV2] = await Promise.all([
+  const [info, people, prizes, rewardRounds] = await Promise.all([
     (await getEventInfo(eid)).info || {},
     getPeople(eid),
     getPrizes(eid),
-    FB.get(`/events/${eid}/ui/rewardRounds`).catch(()=>({})),
-    FB.get(`/events/${eid}/ui/luckyV2`).catch(()=>({}))
+    FB.get(`/events/${eid}/ui/rewardRounds`).catch(()=>({}))
   ]);
 
   const labelPhone = info.labelPhone || 'Phone';
@@ -200,10 +137,9 @@ export async function exportCSV(){
   roundIdsFromPeople.forEach(id => {
     if (!roundEntries.some(r => r.id === id)) roundEntries.push({ id, name: id });
   });
-  const v2GiftMaps = collectLuckyV2GiftMaps(luckyV2 && !luckyV2.error ? luckyV2 : {});
 
   const rows = [
-    ['Code', labelPhone, 'Name', labelDept, 'Table', 'Seat', 'Present', '首次登入時間', '最後登入時間', 'LuckyPrize', ...roundEntries.map(r => r.name), 'Lucky Draw V2 - Main Draw', 'Lucky Draw V2 - Second Draw / Extra Round'],
+    ['Code', labelPhone, 'Name', labelDept, 'Table', 'Seat', 'Present', '首次登入時間', '最後登入時間', 'LuckyPrize', ...roundEntries.map(r => r.name)],
     ...people.map(p=>[
       p.code || '',
       p.phone || '',
@@ -215,9 +151,7 @@ export async function exportCSV(){
       p.firstLoginAtHK || formatHongKongDateTime(p.firstLoginAt),
       p.lastLoginAtHK || formatHongKongDateTime(p.lastLoginAt),
       prizeMap.get(p.phone ? `phone:${p.phone}` : `${p.name}||${p.dept||''}`) || p.prize || '',
-      ...roundEntries.map(r => (p.rewardRounds && p.rewardRounds[r.id]) || ''),
-      luckyV2GiftsForPerson(p, v2GiftMaps.main).join('; '),
-      luckyV2GiftsForPerson(p, v2GiftMaps.second).join('; ')
+      ...roundEntries.map(r => (p.rewardRounds && p.rewardRounds[r.id]) || '')
     ])
   ];
 

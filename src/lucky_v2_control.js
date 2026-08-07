@@ -10,13 +10,12 @@ import {
   undoLastV2,
   clearV2Stage,
   csvForBatches,
-  allBatches,
   activeBatches,
   recentBatches,
   prizeAvailability,
   roundIdFor,
   v2Root
-} from './lucky_v2_core.js?v=20260731a';
+} from './lucky_v2_core.js?v=20260712j';
 import { applyV2Assets, renderV2Stage } from './lucky_v2_stage.js?v=20260714a';
 
 const eid = initEventFromUrl();
@@ -378,7 +377,7 @@ function selectedBatchId() {
 function downloadCsv() {
   const summary = lastSummary;
   if (!summary) return;
-  const batches = allBatches(summary.v2);
+  const batches = activeBatches(summary.v2);
   const csv = csvForBatches(batches);
   const stamp = new Date().toISOString().replace(/[:T]/g, '-').slice(0, 19);
   const objectUrl = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
@@ -390,7 +389,7 @@ function downloadCsv() {
   a.click();
   a.remove();
   setTimeout(() => URL.revokeObjectURL(objectUrl), 2000);
-  status(`CSV export started. ${batches.length} saved batches included (active, undone, and replaced).`);
+  status(`CSV export started. ${batches.length} active batches included.`);
 }
 
 function bindControls() {

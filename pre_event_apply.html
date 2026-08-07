@@ -48,14 +48,14 @@
         </fieldset>
 
         <div id="choiceFields" class="pe-flow pe-collapsible">
-          <section id="transportStep" class="pe-step" hidden>
+          <section id="transportStep" class="pe-step">
             <label class="pe-field">
               <span>交通方式<br><span class="pe-en">Transport</span></span>
-              <select id="transport"></select>
+              <select id="transport" required></select>
             </label>
           </section>
 
-          <section id="shuttleFields" class="pe-step pe-shuttle pe-collapsible is-collapsed" hidden aria-hidden="true">
+          <section id="shuttleFields" class="pe-step pe-shuttle pe-collapsible is-collapsed" aria-hidden="true">
             <label class="pe-field">
               <span>到場選擇<br><span class="pe-en">Arrival selection</span></span>
               <select id="pickupLocation"></select>
@@ -77,7 +77,7 @@
 
         </div>
 
-        <label id="remarksField" class="pe-field" hidden>
+        <label class="pe-field">
           <span>備註<br><span class="pe-en">Remarks</span></span>
           <textarea id="remarks" rows="3"></textarea>
         </label>
@@ -95,6 +95,6 @@
   </main>
 
   <script src="./src/pre_event_apply_config.js"></script>
-  <script src="./src/pre_event_apply.js?v=20260724b"></script>
+  <script src="./src/pre_event_apply.js?v=20260715c"></script>
 </body>
 </html>

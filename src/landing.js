@@ -151,19 +151,6 @@ function restoreGuestSession(eid) {
   } catch (_) {}
 }
 
-function clearGuestSession() {
-  const key = boothSessionKey(currentEventId);
-  if (key) localStorage.removeItem(key);
-  currentGuestIndex = -1;
-  stopBoothScanner();
-  const panel = document.getElementById("gameBoothPanel");
-  if (panel) panel.style.display = "none";
-  const howToGetThere = document.getElementById("howToGetThereSection");
-  if (howToGetThere) howToGetThere.style.display = "";
-  renderGameBoothStatus();
-  showLandingMessage("已登出測試工作階段。你可以再次按報到 (Attend)。Session signed out. You can press Attend again for testing.", false);
-}
-
 function currentGuest() {
   return currentGuestIndex >= 0 ? landingPeople[currentGuestIndex] : null;
 }
@@ -346,7 +333,6 @@ function bindGameBoothControls() {
     await markGameBoothComplete(input?.value || "");
     if (input) input.value = "";
   });
-  document.getElementById("signOutBoothSession")?.addEventListener("click", clearGuestSession);
 }
 
 // ---- Event info + visuals ----
@@ -427,6 +413,20 @@ async function loadEventHeader(eid) {
     const livePhotoLink = String(info.landingLivePhotoLink || "").trim();
     livePhotoButton.style.display = livePhotoLink ? "inline-flex" : "none";
     if (livePhotoLink) livePhotoButton.href = livePhotoLink;
+  }
+  const customLinkButton = document.getElementById("customLandingLinkButton");
+  if (customLinkButton) {
+    const customLink = String(info.landingCustomLink || "").trim();
+    const customLabel = String(info.landingCustomLinkLabel || "").trim() || "EVENT LINK";
+    customLinkButton.textContent = customLabel;
+    customLinkButton.style.display = customLink ? "inline-flex" : "none";
+    if (customLink) customLinkButton.href = customLink;
+  }
+  const landingLinkRow = document.getElementById("landingLinkRow");
+  if (landingLinkRow) {
+    const hasVisibleLink = [livePhotoButton, customLinkButton]
+      .some(button => button && button.style.display !== "none");
+    landingLinkRow.style.display = hasVisibleLink ? "flex" : "none";
   }
   const hasNotes = Boolean((info.notes || "").trim());
   const hasMap = Boolean((info.mapUrl || "").trim());
@@ -575,7 +575,7 @@ function attachCheckin(eid) {
             .join(" · ")
         : "";
 
-      const successMsg = `${name || "來賓"}已登記抽獎，歡迎！You have been registered for the lucky draw. Welcome!`;
+      const successMsg = "已登記抽獎，歡迎！You have been registered for the lucky draw. Welcome!";
       const sessionSeatStr = seatTextForGuest(found);
       showMessage(successMsg, false);
 

@@ -277,6 +277,24 @@
   display: none !important;
 }
 
+/* Center the QR frame inside the space left below the banner. */
+.qr-mode .winners-area.stage-main {
+  flex: 1 1 0;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+}
+.qr-mode .winners-area.stage-main #stageGrid,
+.qr-mode .winners-area.stage-main .qr-panel {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+.qr-mode .winners-area.stage-main .qr-box-inline {
+  align-self: center;
+  max-height: 100%;
+}
+
 /* Poll results mode (bar chart in grid) */
 .results-mode #stageCountdown {
   display: none !important;
