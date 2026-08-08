@@ -1371,7 +1371,14 @@ function renderRow(tr, p, idx, mode){
       const identityChanged = previousIdentity.name !== p.name
         || previousIdentity.phone !== p.phone
         || previousIdentity.code !== p.code;
-      await setPeopleWithSync(eid, people, { syncVoterLookup: identityChanged });
+      try {
+        await setPeopleWithSync(eid, people, { syncVoterLookup: identityChanged });
+      } catch (err) {
+        const permissionDenied = identityChanged
+          && /permission denied/i.test(err?.message || String(err));
+        if (!permissionDenied) throw err;
+        await setPeopleWithSync(eid, people);
+      }
       renderRow(tr, p, idx, 'view');
     };
     tr.querySelector('.save').onclick = doSave;
@@ -1445,7 +1452,9 @@ function renderRow(tr, p, idx, mode){
     tr.querySelector('.delete').onclick = async ()=>{
       const ok = confirm(`確定刪除「${p.name||''}」？`);
       if(!ok) return;
-      people.splice(idx, 1);
+      const actualIndex = people.indexOf(p);
+      if (actualIndex < 0) return;
+      people.splice(actualIndex, 1);
       await setPeopleWithSync(eid, people, { syncVoterLookup: true });
       await renderRoster();
     };
