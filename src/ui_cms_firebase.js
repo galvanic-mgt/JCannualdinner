@@ -1455,7 +1455,13 @@ function renderRow(tr, p, idx, mode){
       const actualIndex = people.indexOf(p);
       if (actualIndex < 0) return;
       people.splice(actualIndex, 1);
-      await setPeopleWithSync(eid, people, { syncVoterLookup: true });
+      try {
+        await setPeopleWithSync(eid, people, { syncVoterLookup: true });
+      } catch (err) {
+        const permissionDenied = /permission denied/i.test(err?.message || String(err));
+        if (!permissionDenied) throw err;
+        await setPeopleWithSync(eid, people);
+      }
       await renderRoster();
     };
   }
