@@ -3,11 +3,10 @@ import { listEvents, createEvent, setCurrentEventId, getCurrentEventId, getEvent
          getQuestions, setQuestions, getAssets, setAssets, getPolls, setPoll, upsertEventMeta } from './core_firebase.js';
 import { addPrize, removePrize, setCurrentPrize, handlePrizeImportCSV, clearAllPrizes, updatePrize } from './stage_prizes_firebase.js';
 import { getRewardRounds, getRewardRoundState, ensureSecondPrizeRound, addRewardRound, addRewardRoundPrize, setCurrentRewardSelection, setCurrentRewardOnStage, drawRewardRoundPrize, updateRewardRound } from './reward_rounds_firebase.js';
-import { handleImportCSV, exportCSV } from './roster_firebase.js?v=20260712f';
+import { handleImportCSV, exportCSV } from './roster_firebase.js?v=20260809d';
 import { renderStageDraw, stopStageDraw } from './stage_draw_ui.js?v=20260711c';
 import { FB } from './fb.js';
 import { voteCountsFromPoll } from './polls_public_firebase.js?v=20260712f';
-import { writePeopleWithVoterLookup } from './voter_lookup.js?v=20260712f';
 
 (function(){
   const btn = document.getElementById('themeToggle');
@@ -1059,11 +1058,10 @@ function setRosterSyncStatus(text){
   if (!el) return;
   el.textContent = text;
 }
-async function setPeopleWithSync(eid, people, { syncVoterLookup = false } = {}){
+async function setPeopleWithSync(eid, people){
   setRosterSyncStatus('更新中…');
   try {
-    if (syncVoterLookup) await writePeopleWithVoterLookup(eid, people);
-    else await setPeople(eid, people);
+    await setPeople(eid, people);
     setRosterSyncStatus('已更新');
   } catch (err) {
     console.error('[roster] sync failed', err);
@@ -1356,11 +1354,6 @@ function renderRow(tr, p, idx, mode){
       }
     };
     const doSave = async ()=>{
-      const previousIdentity = {
-        name: String(p.name || '').trim(),
-        phone: String(p.phone || '').trim(),
-        code: String(p.code || '').trim()
-      };
       const v = sel => tr.querySelector(sel)?.value?.trim() || '';
       p.name  = v('.in.name');
       p.dept  = v('.in.dept');
@@ -1368,17 +1361,7 @@ function renderRow(tr, p, idx, mode){
       p.code  = v('.in.code');
       p.table = v('.in.table');
       p.seat  = v('.in.seat');
-      const identityChanged = previousIdentity.name !== p.name
-        || previousIdentity.phone !== p.phone
-        || previousIdentity.code !== p.code;
-      try {
-        await setPeopleWithSync(eid, people, { syncVoterLookup: identityChanged });
-      } catch (err) {
-        const permissionDenied = identityChanged
-          && /permission denied/i.test(err?.message || String(err));
-        if (!permissionDenied) throw err;
-        await setPeopleWithSync(eid, people);
-      }
+      await setPeopleWithSync(eid, people);
       renderRow(tr, p, idx, 'view');
     };
     tr.querySelector('.save').onclick = doSave;
@@ -1455,13 +1438,7 @@ function renderRow(tr, p, idx, mode){
       const actualIndex = people.indexOf(p);
       if (actualIndex < 0) return;
       people.splice(actualIndex, 1);
-      try {
-        await setPeopleWithSync(eid, people, { syncVoterLookup: true });
-      } catch (err) {
-        const permissionDenied = /permission denied/i.test(err?.message || String(err));
-        if (!permissionDenied) throw err;
-        await setPeopleWithSync(eid, people);
-      }
+      await setPeopleWithSync(eid, people);
       await renderRoster();
     };
   }
@@ -1513,13 +1490,7 @@ function bindRoster(){
     const eid = getCurrentEventId(); if(!eid) return;
     const ok = confirm('確定要清空全部名單？此動作無法復原。');
     if(!ok) return;
-    try {
-      await setPeopleWithSync(eid, [], { syncVoterLookup: true });
-    } catch (err) {
-      const permissionDenied = /permission denied/i.test(err?.message || String(err));
-      if (!permissionDenied) throw err;
-      await setPeopleWithSync(eid, []);
-    }
+    await setPeopleWithSync(eid, []);
     rosterState.page = 1;
     await renderRoster();
   });

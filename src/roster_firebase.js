@@ -1,6 +1,5 @@
-import { getCurrentEventId, getPeople, getEventInfo, getPrizes } from './core_firebase.js';
+import { getCurrentEventId, getPeople, getEventInfo, getPrizes, setPeople } from './core_firebase.js';
 import { FB } from './fb.js';
-import { writePeopleWithVoterLookup } from './voter_lookup.js?v=20260712f';
 
 export function normalizeName(s){ return (s || '').trim().replace(/\s+/g,' '); }
 
@@ -76,7 +75,7 @@ export async function importCSV(text){
     };
   }).filter(Boolean);
 
-  await writePeopleWithVoterLookup(eid, people);
+  await setPeople(eid, people);
   return people;
 }
 
