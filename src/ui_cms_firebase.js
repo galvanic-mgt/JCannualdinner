@@ -1513,7 +1513,13 @@ function bindRoster(){
     const eid = getCurrentEventId(); if(!eid) return;
     const ok = confirm('確定要清空全部名單？此動作無法復原。');
     if(!ok) return;
-    await setPeopleWithSync(eid, [], { syncVoterLookup: true });
+    try {
+      await setPeopleWithSync(eid, [], { syncVoterLookup: true });
+    } catch (err) {
+      const permissionDenied = /permission denied/i.test(err?.message || String(err));
+      if (!permissionDenied) throw err;
+      await setPeopleWithSync(eid, []);
+    }
     rosterState.page = 1;
     await renderRoster();
   });
