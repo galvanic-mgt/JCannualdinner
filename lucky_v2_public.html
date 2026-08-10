@@ -108,6 +108,9 @@
     .v2-stage.is-poll .v2-main-area{grid-template-rows:minmax(0,1fr);gap:0;align-content:start}
     .v2-stage.is-poll .v2-prize{display:none!important}
     .v2-stage.is-poll .v2-machine{height:100%;align-items:start;align-content:start}
+    .v2-stage.is-poll:has(.v2-poll-results-list) .v2-main-area{display:flex;flex-direction:column;justify-content:center;align-items:stretch;gap:2vh}
+    .v2-stage.is-poll:has(.v2-poll-results-list) .v2-prize{display:flex!important;flex:0 0 auto}
+    .v2-stage.is-poll:has(.v2-poll-results-list) .v2-machine{height:auto;flex:0 1 auto;align-items:stretch;align-content:center;justify-content:center}
     .v2-stage.is-poll .v2-machine.v2-poll-qr-mode{align-items:center;align-content:center;justify-content:center}
     .v2-stage.is-poll .v2-machine.v2-poll-qr-mode .v2-poll-qr{margin:0 auto}
     .v2-stage.is-brand-hidden .v2-brand{grid-template-columns:1fr}
