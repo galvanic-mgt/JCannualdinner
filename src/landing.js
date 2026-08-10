@@ -169,13 +169,16 @@ function seatTextForGuest(guest) {
 
 function renderSeatInfo(guest) {
   const seatCard = document.getElementById("seatCard");
+  const seatGuestNameEl = document.getElementById("seatGuestName");
   const seatInfoEl = document.getElementById("seatInfo");
   if (!seatCard || !seatInfoEl) return;
   const seatStr = seatTextForGuest(guest);
   if (seatStr) {
+    if (seatGuestNameEl) seatGuestNameEl.textContent = guest?.name || "來賓";
     seatInfoEl.textContent = seatStr;
     seatCard.style.display = "block";
   } else {
+    if (seatGuestNameEl) seatGuestNameEl.textContent = "";
     seatInfoEl.textContent = "";
     seatCard.style.display = "none";
   }
