@@ -5,7 +5,7 @@
   <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover" />
   <title>活動報到 · 現場參加者入口</title>
-  <link rel="stylesheet" href="./landing.css?v=20260807a" />
+  <link rel="stylesheet" href="./landing.css?v=20260810b" />
 </head>
 <body>
   <!-- 背景 Banner（由 landing.js 設定 background-image） -->
@@ -41,6 +41,7 @@
 
       <!-- 座位資訊：只有在有枱號 / 座位時才顯示 -->
       <div id="seatCard" class="lp-card" style="display:none; margin-top:8px">
+        <p id="seatGuestName" class="lp-seat-guest-name"></p>
         <h4 id="seatTitle">歡迎！你的座位安排</h4>
         <p id="seatInfo" style="font-weight:700"></p>
       </div>
@@ -95,6 +96,6 @@
 
   <!-- landing.js：負責讀取 Firebase、顯示 LOGO / Banner / 背景、以及報到邏輯 -->
   <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
-  <script src="./src/landing.js?v=20260810c"></script>
+  <script src="./src/landing.js?v=20260810d"></script>
 </body>
 </html>
